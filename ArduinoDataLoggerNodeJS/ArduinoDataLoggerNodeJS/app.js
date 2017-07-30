@@ -14,7 +14,8 @@ var arduinoBoard = new johnnyFive.Board();
 function getTime()
 {
     /*
-        Should return a time string with the format of 'YYYY-MM-DD' and 'HH:MM:SS'
+        Should return a time string with the format of 'YYYY-MM-DD' and 'HH:MM:SS'.
+        Unix time should also be returned
     */
     var date = new Date();
     var year = date.getFullYear();
@@ -24,19 +25,26 @@ function getTime()
     var minute = ('0' + date.getMinutes()).slice(-2);
     var second = ('0' + date.getSeconds()).slice(-2);
     
-    return [year + '-' + month + '-' + day, hour + ':' + minute + ':' + second]
+    return [year + '-' + month + '-' + day, hour + ':' + minute + ':' + second, Math.floor(date/1000)]
 }
 
 function vibrationStart()
 {
     var startTime = getTime();
+
     console.log(startTime[0] + " " + startTime[1]);
+
+    return startTime[2];
 }
 
-function vibrationStop()
+function vibrationStop(startTimeUnix)
 {
     var endTime = getTime();
     console.log(endTime[0] + " " + endTime[1]);
+    var endTimeUnix = endTime[2];
+    var lengthTime = endTimeUnix - startTimeUnix;
+    console.log("Length time: " + lengthTime);
+
 }
 
 arduinoBoard.on("ready", function () {
@@ -44,6 +52,7 @@ arduinoBoard.on("ready", function () {
     var tilt = new johnnyFive.Sensor.Digital(8);
     var sensorCount = 0;
     var sensorFlag = false, prevSensorFlag = false;
+    var startTime = 0;
 
     // When sensor changes value
     tilt.on("change", function () {
@@ -61,15 +70,16 @@ arduinoBoard.on("ready", function () {
         if (sensorFlag & !prevSensorFlag)
         {
             prevSensorFlag = true;
-            vibrationStart();
+            startTime = vibrationStart();
             console.log("Vibration started.");
+
         }
 
         // Sensor just turned off
         if (!sensorFlag && prevSensorFlag)
         {
             prevSensorFlag = false;
-            vibrationStop();
+            vibrationStop(startTime);
             console.log("Vibration stopped.");
         }
 
