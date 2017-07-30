@@ -11,6 +11,8 @@
 var johnnyFive = require("Johnny-Five");
 var arduinoBoard = new johnnyFive.Board();
 
+var machineName = "TRUMPF 500";
+
 function getTime()
 {
     /*
@@ -25,17 +27,27 @@ function getTime()
     var minute = ('0' + date.getMinutes()).slice(-2);
     var second = ('0' + date.getSeconds()).slice(-2);
 
+    // Unix Time
     var unixTime = Math.floor(date / 1000);
 
-    return [year + '-' + month + '-' + day, hour + ':' + minute + ':' + second, unixTime];
+    // Check if it is day or night
+    var isDay;
+    if (date.getHours() >= 8 & date.getHours() < 16)
+    {
+        isDay = true;
+    }
+    else 
+    {
+        isDay = false;
+    }
+
+    return [year + '-' + month + '-' + day, hour + ':' + minute + ':' + second, unixTime, isDay];
 }
 
 function vibrationStart()
 {
     var startTime = getTime();
-
     console.log(startTime[0] + " " + startTime[1]);
-
     return startTime[2];
 }
 
