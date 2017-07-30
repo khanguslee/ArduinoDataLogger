@@ -24,8 +24,10 @@ function getTime()
     var hour = ('0' + date.getHours()).slice(-2);
     var minute = ('0' + date.getMinutes()).slice(-2);
     var second = ('0' + date.getSeconds()).slice(-2);
-    
-    return [year + '-' + month + '-' + day, hour + ':' + minute + ':' + second, Math.floor(date/1000)]
+
+    var unixTime = Math.floor(date / 1000);
+
+    return [year + '-' + month + '-' + day, hour + ':' + minute + ':' + second, unixTime];
 }
 
 function vibrationStart()
