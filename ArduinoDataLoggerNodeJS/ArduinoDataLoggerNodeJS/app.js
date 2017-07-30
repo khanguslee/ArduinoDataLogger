@@ -11,8 +11,11 @@
 var johnnyFive = require("Johnny-Five");
 var arduinoBoard = new johnnyFive.Board();
 
-var machineName = "TRUMPF 500";
+// Initialise http-post
+var http = require("http");
+http.post = require("http-post");
 
+var machineName = "TRUMPF 500";
 function getTime()
 {
     /*
@@ -48,6 +51,14 @@ function vibrationStart()
 {
     var startTime = getTime();
     console.log(startTime[0] + " " + startTime[1]);
+
+    var startData = {
+        machine: machineName,
+        start_time: startTime[0] + " " + startTime[1],
+        day_night: startTime[3],
+        active: "true"
+    };
+
     return startTime[2];
 }
 
@@ -58,6 +69,13 @@ function vibrationStop(startTimeUnix)
     var endTimeUnix = endTime[2];
     var lengthTime = endTimeUnix - startTimeUnix;
     console.log("Length time: " + lengthTime);
+
+    var endDate = {
+        machine: machineName,
+        end_time: endTime[0] + " " + endTime[1],
+        length_time: lengthTime,
+        active: "false"
+    };
 
 }
 
