@@ -13,8 +13,9 @@ var arduinoBoard = new johnnyFive.Board();
 
 // Initialise http-post
 var http = require("http");
-http.post = require("http-post");
+var request = require("request")
 
+var serverURL = "https://requestb.in/10wgwcp1";
 var machineName = "TRUMPF 500";
 function getTime()
 {
@@ -59,6 +60,19 @@ function vibrationStart()
         active: "true"
     };
 
+    const options = {
+        url: serverURL,
+        method: "POST",
+        form: startData
+    };
+
+    request.post(options, function (error, response, body) {
+        if (!error)
+        {
+            console.log("Sent starting message!");
+        }
+    })
+
     return startTime[2];
 }
 
@@ -77,6 +91,19 @@ function vibrationStop(startTimeUnix)
         active: "false"
     };
 
+    const options = {
+        url: serverURL,
+        method: "POST",
+        form: endDate
+    };
+
+    request.post(options, function (error, response, body) {
+        if (!error)
+        {
+            console.log("Sent end message");
+        }
+    })
+
 }
 
 arduinoBoard.on("ready", function () {
@@ -94,7 +121,6 @@ arduinoBoard.on("ready", function () {
     });
 
     // Continuously loops
-    
     var timeoutValue = 100;         // Change timeout value later on.
     tilt.on("data", function () {
 
