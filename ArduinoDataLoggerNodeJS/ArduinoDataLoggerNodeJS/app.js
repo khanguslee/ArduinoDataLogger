@@ -15,7 +15,7 @@ var arduinoBoard = new johnnyFive.Board();
 var http = require("http");
 var request = require("request")
 
-var serverURL = "https://requestb.in/10wgwcp1";
+var serverURL = "https://requestb.in/10wgwcp1";     // Inset URL you wanna send POST packet to
 var machineName = "TRUMPF 500";
 function getTime()
 {
