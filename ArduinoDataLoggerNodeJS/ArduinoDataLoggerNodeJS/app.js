@@ -7,16 +7,58 @@
         Red:        GND
 */
 
-// Initialise Johnny-Five
+// Dependencies
 var johnnyFive = require("Johnny-Five");
 var arduinoBoard = new johnnyFive.Board();
 
-// Initialise http-post
-var http = require("http");
-var request = require("request")
+var request = require("request");
 
-var serverURL = "https://requestb.in/10wgwcp1";     // Inset URL you wanna send POST packet to
+var fs = require("fs");
+var serverURL = "https://requestb.in/18c3rij1";     // Inset URL you wanna send POST packet to
 var machineName = "TRUMPF 500";
+
+function sendBackupData()
+{
+    var jsonTable = { "table": [] };
+    fs.readFile("backup.json", "utf8", function (err, data) {
+        if (err) throw err;
+        jsonTable = JSON.parse(data);
+        if (jsonTable.table.length == 0)
+        {
+            return;
+        }
+
+        for (var index = 0; index < jsonTable.table.length; index++) {
+            console.log(jsonTable.table.length);
+
+            var options = {
+                url: serverURL,
+                method: "POST",
+                form: jsonTable.table.shift()
+            };
+
+            request.post(options, function (error, response, body) {
+                if (!error) {
+                    console.log("Sent backup message!");
+                } else {
+                    console.log(error);
+                    console.log("CANT'T SEND BACK");
+                    console.log(options.form)
+                    jsonTable.table.push(options.form)
+                }
+            });
+        }
+        console.log(jsonTable);
+        var outputJSON = JSON.stringify(jsonTable);
+        console.log(outputJSON);
+        fs.writeFile("backup.json", outputJSON, "utf8", function (err) {
+            if (err) throw err;
+            console.log("Sent backup data!")
+        });
+    })
+}
+
+
 function getTime()
 {
     /*
@@ -50,6 +92,7 @@ function getTime()
 
 function vibrationStart()
 {
+    var jsonTable = { "table": [] };
     var startTime = getTime();
     console.log(startTime[0] + " " + startTime[1]);
 
@@ -70,6 +113,19 @@ function vibrationStart()
         if (!error)
         {
             console.log("Sent starting message!");
+            sendBackupData();
+        } else {
+            console.log("CANT'T SEND");
+            // Write to JSON file for backup if can't send to server
+            fs.readFile("backup.json", "utf8", function readFileCallback(err, data) {
+                if (err) throw err;
+                jsonTable = JSON.parse(data);
+                jsonTable.table.push(startData);
+                var outputJSON = JSON.stringify(jsonTable);
+                fs.writeFile("backup.json", outputJSON, "utf8", function (err) {
+                    if (err) throw err;
+                });
+            });
         }
     })
 
@@ -78,13 +134,14 @@ function vibrationStart()
 
 function vibrationStop(startTimeUnix)
 {
+    var jsonTable = { "table": [] };
     var endTime = getTime();
     console.log(endTime[0] + " " + endTime[1]);
     var endTimeUnix = endTime[2];
     var lengthTime = endTimeUnix - startTimeUnix;
     console.log("Length time: " + lengthTime);
 
-    var endDate = {
+    var endData = {
         machine: machineName,
         end_time: endTime[0] + " " + endTime[1],
         length_time: lengthTime,
@@ -94,13 +151,26 @@ function vibrationStop(startTimeUnix)
     const options = {
         url: serverURL,
         method: "POST",
-        form: endDate
+        form: endData
     };
 
     request.post(options, function (error, response, body) {
-        if (!error)
-        {
-            console.log("Sent end message");
+        if (!error) {
+            console.log("Sent end message!");
+            sendBackupData();
+        } else {
+            console.log("CANT'T SEND");
+
+            // Write to JSON file for backup if can't send to server
+            fs.readFile("backup.json", "utf8", function readFileCallback(err, data) {
+                if (err) throw err;
+                jsonTable = JSON.parse(data);
+                jsonTable.table.push(endData);
+                var outputJSON = JSON.stringify(jsonTable);
+                fs.writeFile("backup.json", outputJSON, "utf8", function (err) {
+                    if (err) throw err;
+                });
+            });
         }
     })
 
