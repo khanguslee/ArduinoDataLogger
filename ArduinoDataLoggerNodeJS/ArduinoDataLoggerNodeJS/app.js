@@ -21,8 +21,6 @@ var machineName = "TRUMPF 500";
 
 // Follow this to set up email address:
 // https://stackoverflow.com/questions/14654736/nodemailer-econnrefused
-/*
-*/
 var nodemailer = require('nodemailer')
 var transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -36,11 +34,14 @@ var transporter = nodemailer.createTransport({
 
 function sendEmail()
 {
+    /*
+    This function will send an email to a chosen email destination
+    */
     var mailOptions = {
         from: JSONcontents.emailAddress,
         to: JSONcontents.emailDestination,
-        subject: 'test email',
-        text: 'It worked'
+        subject: 'Arduino Inactive',
+        text: 'Arduino Inactive'
     };
     transporter.sendMail(mailOptions, function (error, info) {
         if (error)
