@@ -8,14 +8,21 @@
 */
 
 // Dependencies
-var johnnyFive = require("Johnny-Five");
+var johnnyFive = require('Johnny-Five');
 var arduinoBoard = new johnnyFive.Board();
 
 var request = require("request");
 
-var fs = require("fs");
-var serverURL = "https://requestb.in/18c3rij1";     // Inset URL you wanna send POST packet to
+var fs = require('fs');
+var serverURL = "https://requestb.in/xs11aqxs";     // Inset URL you wanna send POST packet to
 var machineName = "TRUMPF 500";
+
+var nodemailer = require('nodemailer')
+
+function sendEmail()
+{
+    console.log('Send email now')
+}
 
 function sendBackupData()
 {
@@ -182,6 +189,7 @@ arduinoBoard.on("ready", function () {
     var sensorCount = 0;
     var sensorFlag = false, prevSensorFlag = false;
     var startTime = 0;
+    var sendEmailTimeout;
 
     // When sensor changes value
     tilt.on("change", function () {
@@ -193,14 +201,13 @@ arduinoBoard.on("ready", function () {
     // Continuously loops
     var timeoutValue = 100;         // Change timeout value later on.
     tilt.on("data", function () {
-
         // Sensor just started turning on
         if (sensorFlag & !prevSensorFlag)
         {
             prevSensorFlag = true;
             startTime = vibrationStart();
             console.log("Vibration started.");
-
+            clearTimeout(sendEmailTimeout); // Don't send email if switch activated before 5 minutes of inactivity
         }
 
         // Sensor just turned off
@@ -209,6 +216,7 @@ arduinoBoard.on("ready", function () {
             prevSensorFlag = false;
             vibrationStop(startTime);
             console.log("Vibration stopped.");
+            sendEmailTimeout = setTimeout(sendEmail, 5000); // Send email after 5 minutes of inactivity
         }
 
         // Sensor reaches timeout value
