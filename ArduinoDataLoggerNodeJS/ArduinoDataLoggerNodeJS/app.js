@@ -14,13 +14,44 @@ var arduinoBoard = new johnnyFive.Board();
 var request = require("request");
 
 var fs = require('fs');
-var serverURL = "https://requestb.in/xs11aqxs";     // Inset URL you wanna send POST packet to
+var JSONfile = fs.readFileSync("credentials.json");
+var JSONcontents = JSON.parse(JSONfile);
+var serverURL = JSONcontents.serverUrl;     // Insert URL you wanna send POST packet to
 var machineName = "TRUMPF 500";
 
+// Follow this to set up email address:
+// https://stackoverflow.com/questions/14654736/nodemailer-econnrefused
+/*
+*/
 var nodemailer = require('nodemailer')
+var transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,   // Use SSL
+    auth: {
+        user: JSONcontents.emailAddress,
+        pass: JSONcontents.emailPassword
+    }
+});
 
 function sendEmail()
 {
+    var mailOptions = {
+        from: JSONcontents.emailAddress,
+        to: JSONcontents.emailDestination,
+        subject: 'test email',
+        text: 'It worked'
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error)
+        {
+            console.log(error);
+        }
+        else
+        {
+            console.log('Email sent: ' + info.response);
+        }
+    })
     console.log('Send email now')
 }
 
@@ -216,7 +247,7 @@ arduinoBoard.on("ready", function () {
             prevSensorFlag = false;
             vibrationStop(startTime);
             console.log("Vibration stopped.");
-            sendEmailTimeout = setTimeout(sendEmail, 5000); // Send email after 5 minutes of inactivity
+            sendEmailTimeout = setTimeout(sendEmail, 5 * 60 * 1000); // Send email after 5 minutes of inactivity
         }
 
         // Sensor reaches timeout value
