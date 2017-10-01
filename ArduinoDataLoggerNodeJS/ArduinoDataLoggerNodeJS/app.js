@@ -35,7 +35,7 @@ var transporter = nodemailer.createTransport({
 function sendEmail()
 {
     /*
-    This function will send an email to a chosen email destination
+    Send an email to a chosen email destination.
     */
     var mailOptions = {
         from: JSONcontents.emailAddress,
@@ -58,6 +58,9 @@ function sendEmail()
 
 function sendBackupData()
 {
+    /*
+    Read from a backup JSON file and send the messages when reconnected to the network. 
+    */
     var jsonTable = { "table": [] };
     fs.readFile("backup.json", "utf8", function (err, data) {
         if (err) throw err;
@@ -97,7 +100,6 @@ function sendBackupData()
     })
 }
 
-
 function getTime()
 {
     /*
@@ -131,6 +133,13 @@ function getTime()
 
 function vibrationStart()
 {
+    /*
+    Should get:
+    - Start time and date the vibration started
+    - Whether it was day or night
+    Will send the message, if there is network connection, once complete.
+    Will store message into a JSON file if there is no network connection.
+    */
     var jsonTable = { "table": [] };
     var startTime = getTime();
     console.log(startTime[0] + " " + startTime[1]);
@@ -173,6 +182,13 @@ function vibrationStart()
 
 function vibrationStop(startTimeUnix)
 {
+    /*
+    Should get:
+    - End time and date the vibration ended
+    - Total length of time
+    Will send the message, if there is network connection, once complete.
+    Will store message into a JSON file if there is no network connection.
+    */
     var jsonTable = { "table": [] };
     var endTime = getTime();
     console.log(endTime[0] + " " + endTime[1]);
@@ -216,6 +232,9 @@ function vibrationStop(startTimeUnix)
 }
 
 arduinoBoard.on("ready", function () {
+    /*
+    Main function that runs when Arduino is 'ready'
+    */
     console.log("Board ready!");
     var tilt = new johnnyFive.Sensor.Digital(8);
     var sensorCount = 0;
