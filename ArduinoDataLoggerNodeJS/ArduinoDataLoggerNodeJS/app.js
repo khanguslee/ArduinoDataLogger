@@ -23,12 +23,11 @@ var machineName = "TRUMPF 500";
 // https://stackoverflow.com/questions/14654736/nodemailer-econnrefused
 var nodemailer = require('nodemailer')
 var transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,   // Use SSL
-    auth: {
-        user: JSONcontents.emailAddress,
-        pass: JSONcontents.emailPassword
+    host: "192.168.1.2",
+    port: 25,
+    secureConnection: false,
+    tls: {
+        rejectUnauthorized: false
     }
 });
 
@@ -40,13 +39,13 @@ function sendEmail()
     var mailOptions = {
         from: JSONcontents.emailAddress,
         to: JSONcontents.emailDestination,
-        subject: 'Arduino Inactive',
-        text: 'Arduino Inactive'
+        subject: '5000 has stopped punching',
+        text: '5000 has stopped punching'
     };
     transporter.sendMail(mailOptions, function (error, info) {
         if (error)
         {
-            console.log(error);
+            console.log('Error: ' + error);
         }
         else
         {
@@ -71,8 +70,6 @@ function sendBackupData()
         }
 
         for (var index = 0; index < jsonTable.table.length; index++) {
-            console.log(jsonTable.table.length);
-
             var options = {
                 url: serverURL,
                 method: "POST",
@@ -83,7 +80,7 @@ function sendBackupData()
                 if (!error) {
                     console.log("Sent backup message!");
                 } else {
-                    console.log(error);
+                    console.log('Error: ' + error);
                     console.log("CANT'T SEND BACK");
                     console.log(options.form)
                     jsonTable.table.push(options.form)
@@ -250,7 +247,7 @@ arduinoBoard.on("ready", function () {
     });
 
     // Continuously loops
-    var timeoutValue = 100;         // Change timeout value later on.
+    var timeoutValue = 500;         // Change timeout value later on.
     tilt.on("data", function () {
         // Sensor just started turning on
         if (sensorFlag & !prevSensorFlag)
