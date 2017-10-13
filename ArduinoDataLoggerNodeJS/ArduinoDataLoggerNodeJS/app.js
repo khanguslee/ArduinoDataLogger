@@ -16,12 +16,12 @@ var request = require("request");
 var fs = require('fs');
 var JSONfile = fs.readFileSync("credentials.json");
 var JSONcontents = JSON.parse(JSONfile);
-var serverURL = JSONcontents.serverUrl;     // Insert URL you wanna send POST packet to
+var serverURL = JSONcontents.server_url;     // Insert URL you wanna send POST packet to
 var machineName = "TRUMPF 500";
 
 // Follow this to set up email address:
 // https://stackoverflow.com/questions/14654736/nodemailer-econnrefused
-var nodemailer = require('nodemailer')
+var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport({
     host: "192.168.1.2",
     port: 25,
@@ -37,8 +37,8 @@ function sendEmail()
     Send an email to a chosen email destination.
     */
     var mailOptions = {
-        from: JSONcontents.emailAddress,
-        to: JSONcontents.emailDestination,
+        from: JSONcontents.email_address,
+        to: JSONcontents.email_destination,
         subject: '5000 has stopped punching',
         text: '5000 has stopped punching'
     };
@@ -51,7 +51,7 @@ function sendEmail()
         {
             console.log('Email sent: ' + info.response);
         }
-    })
+    });
     console.log('Send email now')
 }
 
@@ -64,8 +64,7 @@ function sendBackupData()
     fs.readFile("backup.json", "utf8", function (err, data) {
         if (err) throw err;
         jsonTable = JSON.parse(data);
-        if (jsonTable.table.length == 0)
-        {
+        if (jsonTable.table.length == 0) {
             return;
         }
 
@@ -87,14 +86,13 @@ function sendBackupData()
                 }
             });
         }
-        console.log(jsonTable);
         var outputJSON = JSON.stringify(jsonTable);
         console.log(outputJSON);
         fs.writeFile("backup.json", outputJSON, "utf8", function (err) {
             if (err) throw err;
             console.log("Sent backup data!")
         });
-    })
+    });
 }
 
 function getTime()
@@ -155,8 +153,7 @@ function vibrationStart()
     };
 
     request.post(options, function (error, response, body) {
-        if (!error)
-        {
+        if (!error) {
             console.log("Sent starting message!");
             sendBackupData();
         } else {
@@ -172,7 +169,7 @@ function vibrationStart()
                 });
             });
         }
-    })
+    });
 
     return startTime[2];
 }
@@ -224,7 +221,7 @@ function vibrationStop(startTimeUnix)
                 });
             });
         }
-    })
+    });
 
 }
 
@@ -247,11 +244,10 @@ arduinoBoard.on("ready", function () {
     });
 
     // Continuously loops
-    var timeoutValue = 500;         // Change timeout value later on.
+    var timeoutValue = 250;         // Change timeout value later on.
     tilt.on("data", function () {
         // Sensor just started turning on
-        if (sensorFlag & !prevSensorFlag)
-        {
+        if (sensorFlag & !prevSensorFlag) {
             prevSensorFlag = true;
             startTime = vibrationStart();
             console.log("Vibration started.");
@@ -259,8 +255,7 @@ arduinoBoard.on("ready", function () {
         }
 
         // Sensor just turned off
-        if (!sensorFlag && prevSensorFlag)
-        {
+        if (!sensorFlag && prevSensorFlag) {
             prevSensorFlag = false;
             vibrationStop(startTime);
             console.log("Vibration stopped.");
@@ -268,11 +263,10 @@ arduinoBoard.on("ready", function () {
         }
 
         // Sensor reaches timeout value
-        if (sensorCount == timeoutValue)
-        {
+        if (sensorCount == timeoutValue) {
             sensorCount = 0;
             sensorFlag = false;
         }
         sensorCount++;
-    })
+    });
 });
