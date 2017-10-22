@@ -14,9 +14,9 @@ var arduinoBoard = new johnnyFive.Board();
 var request = require("request");
 
 var fs = require('fs');
-var JSONfile = fs.readFileSync("credentials.json");
-var JSONcontents = JSON.parse(JSONfile);
-var serverURL = JSONcontents.server_url;     // Insert URL you wanna send POST packet to
+var credentialsFile = fs.readFileSync("credentials.json");
+var credentials = JSON.parse(credentialsFile);
+var serverURL = credentials.server_url;     // Insert URL you wanna send POST packet to
 var machineName = "TRUMPF 500";
 
 // Follow this to set up email address:
@@ -36,9 +36,11 @@ function sendEmail()
     /*
     Send an email to a chosen email destination.
     */
+    var optionsFile = fs.readFileSync("options.json");
+    var userOptions = JSON.parse(optionsFile);
     var mailOptions = {
-        from: JSONcontents.email_address,
-        to: JSONcontents.email_destination,
+        from: credentials.email_address,
+        to: credentials.email_destination,
         subject: '5000 has stopped punching',
         text: '5000 has stopped punching'
     };
@@ -259,6 +261,7 @@ arduinoBoard.on("ready", function () {
             prevSensorFlag = false;
             vibrationStop(startTime);
             console.log("Vibration stopped.");
+            
             sendEmailTimeout = setTimeout(sendEmail, 5 * 60 * 1000); // Send email after 5 minutes of inactivity
         }
 

@@ -1,0 +1,39 @@
+{
+	"email_disabled_times": [{
+		"monday": [{
+			"start": "0700",
+			"end": "1700"
+		}{
+			]
+		},
+		{
+			"tuesday": [{
+				"start": "0700",
+				"end": "1700"
+			}]
+		},
+		{
+			"wednesday": [{
+				"start": "0700",
+				"end": "1700"
+			}]
+		},
+		{
+			"thursday": [{
+				"start": "0700",
+				"end": "1700"
+			}]
+		},
+		{
+			"friday": [{
+				"start": "0700",
+				"end": "1700"
+			}]
+		},
+		{
+			"saturday": []
+		},
+		{
+			"sunday": []
+		}]
+	}
