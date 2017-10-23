@@ -19,6 +19,10 @@ var credentials = JSON.parse(credentialsFile);
 var serverURL = credentials.server_url;     // Insert URL you wanna send POST packet to
 var machineName = "TRUMPF 500";
 
+// Read option file
+var optionsFile = fs.readFileSync("options.json");
+var userOptions = JSON.parse(optionsFile);
+
 // Follow this to set up email address:
 // https://stackoverflow.com/questions/14654736/nodemailer-econnrefused
 var nodemailer = require('nodemailer');
@@ -31,13 +35,60 @@ var transporter = nodemailer.createTransport({
     }
 });
 
+function checkDay(dayString) {
+    /* Converts day string to int */
+    switch (dayString)
+    {
+        case 'monday':
+            return 1;
+        case 'tuesday':
+            return 2;
+        case 'wednesday':
+            return 3;
+        case 'thursday':
+            return 4;
+        case 'friday':
+            return 5;
+        case 'saturday':
+            return 6;
+        case 'sunday':
+            return 0
+    }
+}
+
+function checkIfValidTime()
+{
+    /* Check if email should be sent */
+    var currentDate = new Date();
+    var currentDay = currentDate.getDay(); 
+    var disabledTimeArray = userOptions.email_disabled_times;
+    for (var i = 0; i < disabledTimeArray.length; i++)
+    {
+        var timeEntry = disabledTimeArray[i]
+        // Check if the current day
+        if (checkDay(timeEntry.weekday) == currentDay)
+        {
+            // Check if email is within disabled time
+            var currentTime = currentDate.getHours() + currentDate.getMinutes;
+            if (parseInt(currentTime) > parseInt(timeEntry.start_time) && parseInt(currentTime) < parseInt(timeEntry.end_time))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 function sendEmail()
 {
     /*
     Send an email to a chosen email destination.
     */
-    var optionsFile = fs.readFileSync("options.json");
-    var userOptions = JSON.parse(optionsFile);
+    if (!checkIfValidTime())
+    {
+        return false;
+    }
+
     var mailOptions = {
         from: credentials.email_address,
         to: credentials.email_destination,
@@ -262,7 +313,8 @@ arduinoBoard.on("ready", function () {
             vibrationStop(startTime);
             console.log("Vibration stopped.");
             
-            sendEmailTimeout = setTimeout(sendEmail, 5 * 60 * 1000); // Send email after 5 minutes of inactivity
+            //sendEmailTimeout = setTimeout(sendEmail, userOptions.email_time * 60 * 1000); // Send email after 5 minutes of inactivity
+            sendEmailTimeout = setTimeout(sendEmail, 1);
         }
 
         // Sensor reaches timeout value

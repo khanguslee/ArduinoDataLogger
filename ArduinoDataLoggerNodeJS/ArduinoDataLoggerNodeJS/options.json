@@ -1,39 +1,38 @@
 {
 	"email_disabled_times": [{
-		"monday": [{
-			"start": "0700",
-			"end": "1700"
-		}{
-			]
-		},
-		{
-			"tuesday": [{
-				"start": "0700",
-				"end": "1700"
-			}]
-		},
-		{
-			"wednesday": [{
-				"start": "0700",
-				"end": "1700"
-			}]
-		},
-		{
-			"thursday": [{
-				"start": "0700",
-				"end": "1700"
-			}]
-		},
-		{
-			"friday": [{
-				"start": "0700",
-				"end": "1700"
-			}]
-		},
-		{
-			"saturday": []
-		},
-		{
-			"sunday": []
-		}]
-	}
+		"weekday": "monday",
+		"start_time": "0700",
+		"end_time": "1800"
+	},
+	{
+		"weekday": "tuesday",
+		"start_time": "0700",
+		"end_time": "1800"
+	},
+	{
+		"weekday": "wednesday",
+		"start_time": "0700",
+		"end_time": "1800"
+	},
+	{
+		"weekday": "thursday",
+		"start_time": "0700",
+		"end_time": "1800"
+	},
+	{
+		"weekday": "friday",
+		"start_time": "0700",
+		"end_time": "1800"
+	},
+	{
+		"weekday": "saturday",
+		"start_time": "0700",
+		"end_time": "1800"
+	},
+	{
+		"weekday": "sunday",
+		"start_time": "0700",
+		"end_time": "1800"
+	}],
+	"email_time": 5
+}
