@@ -34,5 +34,6 @@
 		"start_time": "0700",
 		"end_time": "1800"
 	}],
-	"email_time": 5
+	"email_time": 5,
+	"enable_email": true
 }

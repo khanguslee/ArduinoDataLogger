@@ -35,6 +35,20 @@ var transporter = nodemailer.createTransport({
     }
 });
 
+// Host server
+var express = require('express');
+var app = express();
+var path = require('path');
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname + '/index.html'));
+})
+app.get('/index.css', (req, res) => {
+    res.sendFile(path.join(__dirname + '/index.css'));
+})
+app.listen(8080, () => {
+    console.log('Arduino Data Logger web interface activated on port 3000');
+})
+
 function checkDay(dayString) {
     /* Converts day string to int */
     switch (dayString)
