@@ -13,6 +13,7 @@
     "http-post": "^0.1.1",
     "johnny-five": "^0.11.3",
     "nodemailer": "^4.1.1",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "socket.io": "^2.0.4"
   }
 }

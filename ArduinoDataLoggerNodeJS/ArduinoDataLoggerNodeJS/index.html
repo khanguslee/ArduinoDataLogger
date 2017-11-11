@@ -2,7 +2,9 @@
 <head>
     <link rel="stylesheet" type="text/css" href="index.css">            
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-    <title>Arduino Data Logger</title>    
+    <title>Arduino Data Logger</title> 
+    <script src="socket.io/socket.io.js"></script>        
+    <script src="index.js" type="text/javascript"></script>    
 </head>
 <body>
     <header>
@@ -13,7 +15,7 @@
         <h3>Options</h3>
         <form class="form-group">
                 <label for="selectEmailActivation">Send Email</label>
-                <select id="selectEmailActivation" class="form-control">
+                <select id="selectEmailActivation" class="form-control" onchange="enableEmailOption()">
                         <option>On</option>
                         <option>Off</option>
                 </select>
@@ -21,93 +23,116 @@
 
         <div id="emailOptions">
             <form class="form-group">
-                    <label for="durationBeforeEmail">Time Before Email</label>
-                    <input type="text" class="form-control" id="durationBeforeEmail" placeholder="seconds"></input>
-                    <small id="emailDurationHelp" class="form-text text-muted">Length of time before an e-mail gets sent</small>
-                </form>
-        
-                <form class="form-group">
-                    <label for="tableOfDatesAndTimes">Email Disabled Times</label>
-                    <table class="table" id="tableOfDatesAndTimes">
-                        <thead>
-                            <tr>
-                                <th scope="col">Day</th>
-                                <th scope="col">Start Time</th>
-                                <th scope="col">End Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <div id="tableBody">
-                                
-                            </div>
-                        </tbody>
-                    </table>
-                </form>
-        
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addDateTimeButton">
-                    Add Date/Time
-                </button>              
-        
-                <div class="modal fade" id="addDateTimeButton" tabindex="-1" role="dialog" aria-labelledby="addDateTime" aria-hidden="true">                
-                    <div class="modal-dialog" role="document">
+                <div>
+                    <p id="currentTimeText">Current Time: <span id="currentTime">0</span> seconds</p>
+                    
+                    <button id="changeDurationButton" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#changeDurationModal">
+                        Change Duration
+                    </button>     
+                </div>
+
+                <div class="modal fade" id="changeDurationModal" role="dialog">
+                    <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="addDateTime">Add Date/Time</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                            <h4 class="modal-title">Change Duration</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>                              
                             </div>
                             <div class="modal-body">
-                                <form class="form-group">
-                                    <label for="inputDay">Day</label>
-                                    <select id="inputDay" class="form-control">
-                                        <option>Sunday</option>
-                                        <option>Monday</option>
-                                        <option>Tuesday</option>
-                                        <option>Wednesday</option>
-                                        <option>Thursday</option>
-                                        <option>Friday</option>
-                                        <option>Saturday</option>
-                                    </select>
-                                </form>
-        
-                                <form class="form-group">                                    
-                                    <label for="inputStartTime">Start Time</label>
-                                    <div class="form-row">
-                                        <div class="col-sm-3">
-                                            <input type="text" class="form-control" id="inputStartTimeHour" placeholder="Hour"></input>
-                                        </div>
-                                        :
-                                        <div class="col-sm-3">
-                                            <input type="text" class="form-control" id="inputStartTimeMinute" placeholder="Minute"></input>                                                                
-                                        </div>
-                                    </div>
-                                </form>
-        
-                                <form class="form-group">                                    
-                                    <label for="inputEndTime">End Time</label>
-                                    <div class="form-row">
-                                        <div class="col-sm-3">
-                                            <input type="text" class="form-control" id="inputEndTimeHour" placeholder="Hour"></input>
-                                        </div>
-                                        :
-                                        <div class="col-sm-3">
-                                            <input type="text" class="form-control" id="inputEndTimeMinute" placeholder="Minute"></input>                                                                
-                                        </div>
-                                    </div>
-                                </form>
+                                <label for="durationBeforeEmail">Time Before Email</label>                      
+                                <input type="text" class="form-control" id="durationBeforeEmail" placeholder="seconds"></input>
+                                <small id="emailDurationHelp" class="form-text text-muted">Length of time before an e-mail gets sent</small>
                             </div>
                             <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
+            </form>
+        
+            <form class="form-group">
+                <label for="tableOfDatesAndTimes">Email Disabled Times</label>
+                <table class="table" id="tableOfDatesAndTimes">
+                    <thead>
+                        <tr>
+                            <th scope="col">Day</th>
+                            <th scope="col">Start Time</th>
+                            <th scope="col">End Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <div id="tableBody">
+                            
+                        </div>
+                    </tbody>
+                </table>
+            </form>
+                
+            <div id="dateTimeButton">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addDateTimeButton">
+                    Add Date/Time
+                </button>     
+            </div>         
+    
+            <div class="modal fade" id="addDateTimeButton" tabindex="-1" role="dialog" aria-labelledby="addDateTime" aria-hidden="true">                
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addDateTime">Add Date/Time</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-group">
+                                <label for="inputDay">Day</label>
+                                <select id="inputDay" class="form-control">
+                                    <option>Sunday</option>
+                                    <option>Monday</option>
+                                    <option>Tuesday</option>
+                                    <option>Wednesday</option>
+                                    <option>Thursday</option>
+                                    <option>Friday</option>
+                                    <option>Saturday</option>
+                                </select>
+                            </form>
+    
+                            <form class="form-group">                                    
+                                <label for="inputStartTime">Start Time</label>
+                                <div class="form-row">
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" id="inputStartTimeHour" placeholder="Hour"></input>
+                                    </div>
+                                    :
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" id="inputStartTimeMinute" placeholder="Minute"></input>                                                                
+                                    </div>
+                                </div>
+                            </form>
+    
+                            <form class="form-group">                                    
+                                <label for="inputEndTime">End Time</label>
+                                <div class="form-row">
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" id="inputEndTimeHour" placeholder="Hour"></input>
+                                    </div>
+                                    :
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" id="inputEndTimeMinute" placeholder="Minute"></input>                                                                
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    
-
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>    
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>    

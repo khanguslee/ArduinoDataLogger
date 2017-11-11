@@ -7,24 +7,83 @@
         Red:        GND
 */
 
-// Dependencies
+/*
+--- Dependencies ---
+*/
 var johnnyFive = require('Johnny-Five');
 var arduinoBoard = new johnnyFive.Board();
 
 var request = require("request");
 
 var fs = require('fs');
-var credentialsFile = fs.readFileSync("credentials.json");
-var credentials = JSON.parse(credentialsFile);
+var credentialsFileName = "credentials.json";
+var readCredentialsFile = fs.readFileSync(credentialsFileName);
+var credentials = JSON.parse(readCredentialsFile);
 var serverURL = credentials.server_url;     // Insert URL you wanna send POST packet to
 var machineName = "TRUMPF 500";
 
 // Read option file
-var optionsFile = fs.readFileSync("options.json");
+var optionsFileName = "options.json"
+var optionsFile = fs.readFileSync(optionsFileName);
 var userOptions = JSON.parse(optionsFile);
 
-// Follow this to set up email address:
-// https://stackoverflow.com/questions/14654736/nodemailer-econnrefused
+/*
+--- Hosting webpage code ---
+Code below is used to host the Arduino Data Logger Webpage on http://localhost:8080
+
+Mostly express and socket.io stuff
+*/
+var app = require('express')();
+var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
+var path = require('path');
+
+io.on('connection', (socket) => {
+    // Initial connection with client 
+    socket.emit('ready', userOptions);
+    console.log('Connected to client');
+
+    socket.on('enable-email', (data) => {
+        userOptions.enable_email = data.enable_email;
+        fs.writeFile(optionsFileName, JSON.stringify(userOptions), 'utf8', (error) => {
+            if (error) {
+                throw error;
+            }
+            console.log("Enable/Disable email option saved!");
+        })
+    });
+
+    socket.on('error', (error) => {  
+        console.log("Error - " + error);
+    });      
+});
+
+// html page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname + '/index.html'));
+});
+
+// CSS file
+app.get('/index.css', (req, res) => {
+    res.sendFile(path.join(__dirname + '/index.css'));
+});
+// .js file
+app.get('/index.js', (req, res) => {
+    res.sendFile(path.join(__dirname + '/index.js'));
+});
+
+server.listen(8080, () => {
+    console.log('Arduino Data Logger web interface activated on port 8080');
+});
+
+/*
+--- E-mail code ---
+Code below allows the script to send an email to a list of email addresses that
+you specify in credentials.json
+
+Follow this to set up email address:
+https://stackoverflow.com/questions/14654736/nodemailer-econnrefused
+*/
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport({
     host: "192.168.1.2",
@@ -34,20 +93,6 @@ var transporter = nodemailer.createTransport({
         rejectUnauthorized: false
     }
 });
-
-// Host server
-var express = require('express');
-var app = express();
-var path = require('path');
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname + '/index.html'));
-})
-app.get('/index.css', (req, res) => {
-    res.sendFile(path.join(__dirname + '/index.css'));
-})
-app.listen(8080, () => {
-    console.log('Arduino Data Logger web interface activated on port 3000');
-})
 
 function checkDay(dayString) {
     /* Converts day string to int */
@@ -98,7 +143,7 @@ function sendEmail()
     /*
     Send an email to a chosen email destination.
     */
-    if (!checkIfValidTime())
+    if (!checkIfValidTime() || !userOptions.enable_email)
     {
         return false;
     }
@@ -192,6 +237,11 @@ function getTime()
 
     return [year + '-' + month + '-' + day, hour + ':' + minute + ':' + second, unixTime, isDay];
 }
+
+/*
+--- Main Code ---
+*/
+
 
 function vibrationStart()
 {

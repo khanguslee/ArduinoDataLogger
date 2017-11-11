@@ -1,3 +1,15 @@
 h1 {
     text-align: center;
 }
+
+#dateTimeButton {
+    text-align: right;
+}
+
+#currentTimeText {
+    display: inline;
+}
+
+#changeDurationButton {
+    float: right;
+}
