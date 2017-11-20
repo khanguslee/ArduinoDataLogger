@@ -43,14 +43,30 @@ io.on('connection', (socket) => {
     socket.emit('ready', userOptions);
     console.log('Connected to client');
 
-    socket.on('enable-email', (data) => {
-        userOptions.enable_email = data.enable_email;
+    function alertOptionsSaved(isSaved) {
+        /*
+            Notify client if it had saved the options
+        */
+        socket.emit('options-saved', isSaved);
+    }
+
+    function saveOptionsToFile() {
         fs.writeFile(optionsFileName, JSON.stringify(userOptions), 'utf8', (error) => {
             if (error) {
-                throw error;
+                alertOptionsSaved(false);
             }
-            console.log("Enable/Disable email option saved!");
+            alertOptionsSaved(true);
         })
+    }
+
+    socket.on('enable-email', (data) => {
+        userOptions.enable_email = data.enable_email;
+        saveOptionsToFile();
+    });
+
+    socket.on('change-duration', (data) => {
+        userOptions.email_time = data.email_time;
+        saveOptionsToFile();
     });
 
     socket.on('error', (error) => {  
@@ -377,8 +393,7 @@ arduinoBoard.on("ready", function () {
             vibrationStop(startTime);
             console.log("Vibration stopped.");
             
-            //sendEmailTimeout = setTimeout(sendEmail, userOptions.email_time * 60 * 1000); // Send email after 5 minutes of inactivity
-            sendEmailTimeout = setTimeout(sendEmail, 1);
+            sendEmailTimeout = setTimeout(sendEmail, userOptions.email_time * 1000); // Send email after 5 minutes of inactivity
         }
 
         // Sensor reaches timeout value

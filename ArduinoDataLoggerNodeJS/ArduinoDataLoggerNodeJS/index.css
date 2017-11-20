@@ -13,3 +13,7 @@ h1 {
 #changeDurationButton {
     float: right;
 }
+
+#success-alert {
+    display: none;
+}

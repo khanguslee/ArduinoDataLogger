@@ -49,15 +49,28 @@ socket.on('ready', (data) => {
     }
 });
 
+socket.on('options-saved', (isSaved) => {
+    if(isSaved) {
+        document.getElementById("success-alert").style.display = "block";
+        setTimeout(function() {
+            document.getElementById("success-alert").style.display = "none";            
+         }, 3000);
+    } else {
+
+    }
+});
+
 function enableEmailOption() {
     displayEmailOption();
     socket.emit('enable-email', {"enable_email": enable_email});
 }
 
-
-// Otherwise show the email options
-
-// Time before email text box should send to app.js the number of seconds
+function changeDuration() {
+    email_time = document.getElementById("durationBeforeEmail").value
+    document.getElementById("durationBeforeEmail").value = '';
+    document.getElementById("currentTime").innerHTML = email_time;
+    socket.emit('change-duration', {"email_time": email_time});
+}
 
 // Email disabled times should show a list of the day and starting/ending times of the email option
 
