@@ -2,9 +2,9 @@
 var socket = io();
 
 // Default options
-var email_disabled_times = [];
-var email_time = 0;
-var enable_email = false;
+var emailDisabledTimes = [];
+var emailTime = 0;
+var enableEmail = false;
 
 function displayEmailOption() {
     /*
@@ -17,6 +17,46 @@ function displayEmailOption() {
         enable_email = true;
         document.getElementById("emailOptions").style.display = "block";
     }
+}
+
+function showTable() {
+    // Delete existing table
+    var table = document.getElementById("tableOfDatesAndTimes");
+    for (let i = table.rows.length - 1; i > 0; i--) {
+        table.deleteRow(i);
+    }
+
+    // Populate table with times
+    var tableHTML = document.getElementById("tableOfDatesAndTimes").getElementsByTagName('tbody')[0];    
+    for (var i = 0; i < emailDisabledTimes.length; i++) {
+        var disabledEntry = emailDisabledTimes[i];
+        var row = tableHTML.insertRow(tableHTML.rows.length);
+
+        var cellDay = row.insertCell(0);
+        cellDay.innerHTML = disabledEntry.weekday;
+
+        var cellStartTime = row.insertCell(1);
+        cellStartTime.innerHTML = disabledEntry.start_time;
+
+        var cellEndTime = row.insertCell(2);
+        cellEndTime.innerHTML = disabledEntry.end_time;
+
+        var cellDelete = row.insertCell(3);
+        cellDelete.innerHTML = '<button id="btnDelete-' + i + '" type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this)">' +
+                                    'Delete' + 
+                                '</button>';
+        
+    }
+}
+
+function deleteRow(inputRow) {
+    let elementID = parseInt(inputRow.id.substring(10, inputRow.id.length));
+    // Remove time entry in array
+    emailDisabledTimes.splice(elementID, 1);
+    // Update stored disabled times
+    socket.emit('delete-time', {"email_disabled_times": emailDisabledTimes});
+    // Re-render table
+    showTable();
 }
 
 // Get already set options and display them
@@ -33,20 +73,7 @@ socket.on('ready', (data) => {
     document.getElementById("currentTime").textContent = emailTime;
 
     // Fill up the table
-    for (var i = 0; i < emailDisabledTimes.length; i++) {
-        var disabledEntry = emailDisabledTimes[i];
-        var tableHTML = document.getElementById("tableOfDatesAndTimes");
-        var row = tableHTML.insertRow(1);
-
-        var cellDay = row.insertCell(0);
-        cellDay.innerHTML = disabledEntry.weekday;
-
-        var cellStartTime = row.insertCell(1);
-        cellStartTime.innerHTML = disabledEntry.start_time;
-
-        var cellEndTime = row.insertCell(2);
-        cellEndTime.innerHTML = disabledEntry.end_time;
-    }
+    showTable();
 });
 
 socket.on('options-saved', (isSaved) => {

@@ -17,3 +17,11 @@ h1 {
 #success-alert {
     display: none;
 }
+
+.table {
+    text-align: center;
+}
+
+tbody tr:hover {
+    background-color: rgba(219, 219, 219, 0.856);
+}
