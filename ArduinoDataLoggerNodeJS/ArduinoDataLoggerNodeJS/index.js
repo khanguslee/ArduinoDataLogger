@@ -20,6 +20,9 @@ function displayEmailOption() {
 }
 
 function showTable() {
+    /*
+        Will display the table of disabled times
+    */
     // Delete existing table
     var table = document.getElementById("tableOfDatesAndTimes");
     for (let i = table.rows.length - 1; i > 0; i--) {
@@ -42,20 +45,54 @@ function showTable() {
         cellEndTime.innerHTML = disabledEntry.end_time;
 
         var cellDelete = row.insertCell(3);
-        cellDelete.innerHTML = '<button id="btnDelete-' + i + '" type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this)">' +
+        cellDelete.innerHTML = '<button id="btnDelete-' + i + '" type="button" class="btn btn-danger btn-sm" onclick="deleteTimeEntry(this)">' +
                                     'Delete' + 
                                 '</button>';
         
     }
 }
 
-function deleteRow(inputRow) {
+function deleteTimeEntry(inputRow) {
+    /*
+        Deletes a specific time entry
+    */
     let elementID = parseInt(inputRow.id.substring(10, inputRow.id.length));
     // Remove time entry in array
     emailDisabledTimes.splice(elementID, 1);
     // Update stored disabled times
-    socket.emit('delete-time', {"email_disabled_times": emailDisabledTimes});
+    socket.emit('update-time', {"email_disabled_times": emailDisabledTimes});
     // Re-render table
+    showTable();
+}
+
+function padZeros(number, length) {
+    /*
+        Function to pad zeros to a given string
+    */
+    var str = '' + number;
+    while(str.length < length) {
+        str = '0' + str;
+    }
+    return str;
+}
+
+function addTimeEntry() {
+    /*
+        Adds a time entry
+    */
+    let inputDay = document.getElementById("inputDay").value;
+    let inputStartTime = padZeros(document.getElementById("inputStartTimeHour").value, 2) + 
+    padZeros(document.getElementById("inputStartTimeMinute").value, 2);
+    let inputEndTime = padZeros(document.getElementById("inputEndTimeHour").value, 2) + 
+                            padZeros(document.getElementById("inputEndTimeMinute").value, 2);
+    let entry = {
+        "weekday": inputDay,
+        "start_time": inputStartTime,
+        "end_time": inputEndTime,
+    }
+    document.getElementById("formAddDateTime").reset(); 
+    emailDisabledTimes.push(entry);
+    socket.emit('update-time', {"email_disabled_times": emailDisabledTimes});
     showTable();
 }
 
@@ -88,17 +125,19 @@ socket.on('options-saved', (isSaved) => {
 });
 
 function enableEmailOption() {
+    /*
+        Enables/disables the email options
+    */
     displayEmailOption();
     socket.emit('enable-email', {"enable_email": enable_email});
 }
 
 function changeDuration() {
+    /*
+        Changes the duration before an email gets sent
+    */
     email_time = document.getElementById("durationBeforeEmail").value
     document.getElementById("durationBeforeEmail").value = '';
     document.getElementById("currentTime").innerHTML = email_time;
     socket.emit('change-duration', {"email_time": email_time});
 }
-
-// Email disabled times should show a list of the day and starting/ending times of the email option
-
-// Adding a new date/time should send to app.js a JSON blob of everything

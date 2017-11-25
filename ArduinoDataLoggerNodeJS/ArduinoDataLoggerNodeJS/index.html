@@ -89,48 +89,49 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form class="form-group">
-                                <label for="inputDay">Day</label>
-                                <select id="inputDay" class="form-control">
-                                    <option>Sunday</option>
-                                    <option>Monday</option>
-                                    <option>Tuesday</option>
-                                    <option>Wednesday</option>
-                                    <option>Thursday</option>
-                                    <option>Friday</option>
-                                    <option>Saturday</option>
-                                </select>
-                            </form>
-    
-                            <form class="form-group">                                    
-                                <label for="inputStartTime">Start Time</label>
-                                <div class="form-row">
-                                    <div class="col-sm-3">
-                                        <input type="text" class="form-control" id="inputStartTimeHour" placeholder="Hour"></input>
-                                    </div>
-                                    :
-                                    <div class="col-sm-3">
-                                        <input type="text" class="form-control" id="inputStartTimeMinute" placeholder="Minute"></input>                                                                
+                            <form id="formAddDateTime">
+                                <div class="form-group">
+                                    <label for="inputDay">Day</label>
+                                    <select id="inputDay" class="form-control">
+                                        <option>Sunday</option>
+                                        <option>Monday</option>
+                                        <option>Tuesday</option>
+                                        <option>Wednesday</option>
+                                        <option>Thursday</option>
+                                        <option>Friday</option>
+                                        <option>Saturday</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group has-success">                                    
+                                    <label for="inputStartTime">Start Time (24 Hour)</label>
+                                    <div class="form-row">
+                                        <div class="col-sm-3">
+                                            <input type="number" class="form-control form-control-success" id="inputStartTimeHour" placeholder="Hour" min="00" max="23"></input>
+                                        </div>
+                                        :
+                                        <div class="col-sm-3">
+                                            <input type="number" class="form-control form-control-success" id="inputStartTimeMinute" placeholder="Minute"></input>                                                                
+                                        </div>
                                     </div>
                                 </div>
-                            </form>
-    
-                            <form class="form-group">                                    
-                                <label for="inputEndTime">End Time</label>
-                                <div class="form-row">
-                                    <div class="col-sm-3">
-                                        <input type="text" class="form-control" id="inputEndTimeHour" placeholder="Hour"></input>
-                                    </div>
-                                    :
-                                    <div class="col-sm-3">
-                                        <input type="text" class="form-control" id="inputEndTimeMinute" placeholder="Minute"></input>                                                                
+                                <div class="form-group">                                    
+                                    <label for="inputEndTime">End Time (24 Hour)</label>
+                                    <div class="form-row">
+                                        <div class="col-sm-3">
+                                            <input type="number" class="form-control" id="inputEndTimeHour" placeholder="Hour"></input>
+                                        </div>
+                                        :
+                                        <div class="col-sm-3">
+                                            <input type="number" class="form-control" id="inputEndTimeMinute" placeholder="Minute"></input>                                                                
+                                        </div>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="addTimeEntry()" data-dismiss="modal">Save changes</button>                            
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
                     </div>
                 </div>
             </div>

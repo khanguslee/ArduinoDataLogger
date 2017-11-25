@@ -69,7 +69,7 @@ io.on('connection', (socket) => {
         saveOptionsToFile();
     });
 
-    socket.on('delete-time', (data) => {
+    socket.on('update-time', (data) => {
         userOptions.email_disabled_times = data.email_disabled_times;
         saveOptionsToFile();
     });
