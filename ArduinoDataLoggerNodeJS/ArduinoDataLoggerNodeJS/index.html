@@ -41,7 +41,7 @@
                             </div>
                             <div class="modal-body">
                                 <label for="durationBeforeEmail">Time Before Email</label>                      
-                                <input type="text" class="form-control" id="durationBeforeEmail" placeholder="seconds"></input>
+                                <input type="number" class="form-control" id="durationBeforeEmail" placeholder="seconds"></input>
                                 <small id="emailDurationHelp" class="form-text text-muted">Length of time before an e-mail gets sent</small>
                             </div>
                             <div class="modal-footer">
@@ -107,11 +107,12 @@
                                     <label for="inputStartTime">Start Time (24 Hour)</label>
                                     <div class="form-row">
                                         <div class="col-sm-3">
-                                            <input type="number" class="form-control form-control-success" id="inputStartTimeHour" placeholder="Hour" min="00" max="23"></input>
+                                            <input type="number" class="form-control form-control-success" id="inputStartTimeHour" placeholder="Hour" min="00" max="23" required>
+                                            <div class="invalid-feedback">Please provide a valid hour (0-23)</div>
                                         </div>
                                         :
                                         <div class="col-sm-3">
-                                            <input type="number" class="form-control form-control-success" id="inputStartTimeMinute" placeholder="Minute"></input>                                                                
+                                            <input type="number" class="form-control form-control-success" id="inputStartTimeMinute" placeholder="Minute" required>                                                             
                                         </div>
                                     </div>
                                 </div>
@@ -119,11 +120,11 @@
                                     <label for="inputEndTime">End Time (24 Hour)</label>
                                     <div class="form-row">
                                         <div class="col-sm-3">
-                                            <input type="number" class="form-control" id="inputEndTimeHour" placeholder="Hour"></input>
+                                            <input type="number" class="form-control" id="inputEndTimeHour" placeholder="Hour" required>
                                         </div>
                                         :
                                         <div class="col-sm-3">
-                                            <input type="number" class="form-control" id="inputEndTimeMinute" placeholder="Minute"></input>                                                                
+                                            <input type="number" class="form-control" id="inputEndTimeMinute" placeholder="Minute" required>                                                                
                                         </div>
                                     </div>
                                 </div>

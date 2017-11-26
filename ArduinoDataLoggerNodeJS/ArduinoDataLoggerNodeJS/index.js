@@ -76,15 +76,66 @@ function padZeros(number, length) {
     return str;
 }
 
+function validateHour(inputHour) {
+    /*
+        Check if user input a valid hour
+    */
+    if (inputHour == "") {
+        return false;
+    }
+
+    if (inputHour >= 0 && inputHour <= 23) {
+        return true;
+    }
+    return false;
+}
+
+function validateMinute(inputMinute) {
+    /*
+        Check if user input a valid minute
+    */
+    if (inputMinute == "") {
+        return false;
+    }
+
+    if (inputMinute >= 0 && inputMinute <= 59) {
+        return true;
+    }
+    return false;
+}
+
 function addTimeEntry() {
     /*
         Adds a time entry
     */
     let inputDay = document.getElementById("inputDay").value;
-    let inputStartTime = padZeros(document.getElementById("inputStartTimeHour").value, 2) + 
-    padZeros(document.getElementById("inputStartTimeMinute").value, 2);
-    let inputEndTime = padZeros(document.getElementById("inputEndTimeHour").value, 2) + 
-                            padZeros(document.getElementById("inputEndTimeMinute").value, 2);
+    // Check start time
+    var startHour = document.getElementById("inputStartTimeHour").value;
+    var startMinute = document.getElementById("inputStartTimeMinute").value;
+
+    // Check if actual hour and minute value
+    if (validateHour(startHour) && validateMinute(startMinute)) {
+        var inputStartTime = padZeros(startHour, 2) + padZeros(startMinute, 2);        
+    } else {
+        // Let user know 
+        return false;
+    }
+
+    // Check end time
+    var endHour = document.getElementById("inputEndTimeHour").value;
+    var endMinute = document.getElementById("inputEndTimeMinute").value;
+    if (validateHour(endHour) && validateMinute(endMinute)) {
+        var inputEndTime = padZeros(endHour, 2) + padZeros(endMinute, 2);
+    } else {
+        // Let user know 
+        return false;
+    }
+
+    // Check if end time is later than start time
+    if (inputStartTime >= inputEndTime) {
+        return false;
+    }
+    
     let entry = {
         "weekday": inputDay,
         "start_time": inputStartTime,
@@ -138,6 +189,9 @@ function changeDuration() {
     */
     email_time = document.getElementById("durationBeforeEmail").value
     document.getElementById("durationBeforeEmail").value = '';
+    if (email_time <= 0) {
+        return false;
+    }
     document.getElementById("currentTime").innerHTML = email_time;
     socket.emit('change-duration', {"email_time": email_time});
 }
