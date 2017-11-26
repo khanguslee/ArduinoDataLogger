@@ -19,5 +19,7 @@ This project allows an Arduino Uno with a SW-420 tilt sensor to send a POST pack
 ### TODO:
 - [ ] Create a separate .js file for different parts of the script
     - [ ] app.js file
+    - [ ] utils.js file 
     - [ ] server.js file (socket.io and express stuff)
     - [ ] email.js (functions for email stuff)
+- [ ] Invalid data should alert user on the form 
