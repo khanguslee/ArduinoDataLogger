@@ -24,6 +24,62 @@ function showErrorAlert(title, message="") {
     }, 3000);
 }
 
+function checkDay(dayString) {
+    /* Converts day string to int */
+    switch (dayString.toLowerCase())
+    {
+        case 'monday':
+            return 1;
+        case 'tuesday':
+            return 2;
+        case 'wednesday':
+            return 3;
+        case 'thursday':
+            return 4;
+        case 'friday':
+            return 5;
+        case 'saturday':
+            return 6;
+        case 'sunday':
+            return 0
+    }
+}
+
+function sortTable() {
+    /*
+        Sorts the emailed disabled times. A basic insertion sort.
+        This will sort the full table every time. 
+        Did this just in case someone messes around with the json file.
+    */
+    var inputTable = emailDisabledTimes;
+    var sortedTable = [];
+    for (let i = 0; i < inputTable.length; i++) {
+        // Pick out item from input table
+        var currentItem = inputTable[i];
+        // Insert into sorted table
+        for (var j = 0; j < sortedTable.length; j++) {
+            var sortedItem = sortedTable[j];
+            if (checkDay(currentItem.weekday) < checkDay(sortedItem.weekday)) {
+                break;
+            } 
+            if(checkDay(currentItem.weekday) === checkDay(sortedItem.weekday)) {
+                // Check start time
+                if (parseInt(currentItem.start_time) < parseInt(sortedItem.start_time)) {
+                    break;
+                }
+                // If start time same, check end time
+                if (parseInt(currentItem.start_time) === parseInt(sortedItem.start_time)) {
+                    if (parseInt(currentItem.end_time) < parseInt(sortedItem.end_time)) {
+                        break;
+                    }
+                }
+            }
+        }
+        sortedTable.splice(j, 0, currentItem);
+    }
+    return sortedTable;
+}
+
 function displayEmailOption() {
     /*
         Shows/Hides the emailOptions div
@@ -40,12 +96,16 @@ function displayEmailOption() {
 function showTable() {
     /*
         Will display the table of disabled times
+        Pre-conditions:
+            emailDisabledTimes - Up to date before this function is called
     */
     // Delete existing table
     var table = document.getElementById("tableOfDatesAndTimes");
     for (let i = table.rows.length - 1; i > 0; i--) {
         table.deleteRow(i);
     }
+
+    emailDisabledTimes = sortTable();
 
     // Populate table with times
     var tableHTML = document.getElementById("tableOfDatesAndTimes").getElementsByTagName('tbody')[0];    
@@ -66,7 +126,6 @@ function showTable() {
         cellDelete.innerHTML = '<button id="btnDelete-' + i + '" type="button" class="btn btn-danger btn-sm" onclick="deleteTimeEntry(this)">' +
                                     'Delete' + 
                                 '</button>';
-        
     }
 }
 
