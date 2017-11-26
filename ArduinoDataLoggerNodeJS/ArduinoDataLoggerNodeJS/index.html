@@ -103,16 +103,15 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group has-success">                                    
+                                <div class="form-group">                                    
                                     <label for="inputStartTime">Start Time (24 Hour)</label>
                                     <div class="form-row">
                                         <div class="col-sm-3">
-                                            <input type="number" class="form-control form-control-success" id="inputStartTimeHour" placeholder="Hour" min="00" max="23" required>
-                                            <div class="invalid-feedback">Please provide a valid hour (0-23)</div>
+                                            <input type="number" class="form-control" id="inputStartTimeHour" placeholder="Hour" min="00" max="23" required>
                                         </div>
                                         :
                                         <div class="col-sm-3">
-                                            <input type="number" class="form-control form-control-success" id="inputStartTimeMinute" placeholder="Minute" required>                                                             
+                                            <input type="number" class="form-control" id="inputStartTimeMinute" placeholder="Minute" required>                                                             
                                         </div>
                                     </div>
                                 </div>
@@ -140,8 +139,14 @@
     </div>
 
     <div class="alert alert-success" id="success-alert"> <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <h4>Options Saved!</h4>
-   </div>
+        <h4><span id="success-header"></span></h4>
+        <p><span id="success-message"></span></p>
+    </div>
+
+    <div class="alert alert-danger" id="danger-alert"> <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <h4><span id="danger-header"></span></h4>
+        <p><span id="danger-message"></span></p>
+    </div>
         
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>    
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>    

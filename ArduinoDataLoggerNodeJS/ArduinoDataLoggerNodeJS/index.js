@@ -6,6 +6,24 @@ var emailDisabledTimes = [];
 var emailTime = 0;
 var enableEmail = false;
 
+function showSuccessAlert(title, message="") {
+    document.getElementById("success-header").innerHTML = title;
+    document.getElementById("success-message").innerHTML = message;
+    document.getElementById("success-alert").style.display = "block";
+    setTimeout(function() {
+        document.getElementById("success-alert").style.display = "none";            
+    }, 3000);
+}
+
+function showErrorAlert(title, message="") {
+    document.getElementById("danger-header").innerHTML = title;
+    document.getElementById("danger-message").innerHTML = message;
+    document.getElementById("danger-alert").style.display = "block";
+    setTimeout(function() {
+        document.getElementById("danger-alert").style.display = "none";            
+    }, 3000);
+}
+
 function displayEmailOption() {
     /*
         Shows/Hides the emailOptions div
@@ -81,12 +99,14 @@ function validateHour(inputHour) {
         Check if user input a valid hour
     */
     if (inputHour == "") {
+        showErrorAlert("Invalid Hour", "No value for hour");        
         return false;
     }
 
     if (inputHour >= 0 && inputHour <= 23) {
         return true;
     }
+    showErrorAlert("Invalid Hour", "Input hour value between 0 and 23");                    
     return false;
 }
 
@@ -95,12 +115,14 @@ function validateMinute(inputMinute) {
         Check if user input a valid minute
     */
     if (inputMinute == "") {
+        showErrorAlert("Invalid Minute", "No value for minute");                
         return false;
     }
 
     if (inputMinute >= 0 && inputMinute <= 59) {
         return true;
     }
+    showErrorAlert("Invalid Minute", "Input minute value between 0 and 59");                        
     return false;
 }
 
@@ -112,12 +134,10 @@ function addTimeEntry() {
     // Check start time
     var startHour = document.getElementById("inputStartTimeHour").value;
     var startMinute = document.getElementById("inputStartTimeMinute").value;
-
     // Check if actual hour and minute value
     if (validateHour(startHour) && validateMinute(startMinute)) {
         var inputStartTime = padZeros(startHour, 2) + padZeros(startMinute, 2);        
     } else {
-        // Let user know 
         return false;
     }
 
@@ -127,15 +147,15 @@ function addTimeEntry() {
     if (validateHour(endHour) && validateMinute(endMinute)) {
         var inputEndTime = padZeros(endHour, 2) + padZeros(endMinute, 2);
     } else {
-        // Let user know 
         return false;
     }
 
     // Check if end time is later than start time
     if (inputStartTime >= inputEndTime) {
+        showErrorAlert("Invalid start/end time", "The input start time is later than the input end time");
         return false;
     }
-    
+
     let entry = {
         "weekday": inputDay,
         "start_time": inputStartTime,
@@ -166,12 +186,9 @@ socket.on('ready', (data) => {
 
 socket.on('options-saved', (isSaved) => {
     if(isSaved) {
-        document.getElementById("success-alert").style.display = "block";
-        setTimeout(function() {
-            document.getElementById("success-alert").style.display = "none";            
-         }, 3000);
+        showSuccessAlert("Options saved!");
     } else {
-
+        showErrorAlert("Options failed to save!");
     }
 });
 
@@ -190,6 +207,7 @@ function changeDuration() {
     email_time = document.getElementById("durationBeforeEmail").value
     document.getElementById("durationBeforeEmail").value = '';
     if (email_time <= 0) {
+        showErrorAlert("Invalid Duration", "Please input a positive duration.");
         return false;
     }
     document.getElementById("currentTime").innerHTML = email_time;

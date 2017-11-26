@@ -18,6 +18,10 @@ h1 {
     display: none;
 }
 
+#danger-alert {
+    display: none;
+}
+
 .table {
     text-align: center;
 }
