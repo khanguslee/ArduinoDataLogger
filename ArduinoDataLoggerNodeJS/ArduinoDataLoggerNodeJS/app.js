@@ -11,7 +11,7 @@
 --- Dependencies ---
 */
 var johnnyFive = require('Johnny-Five');
-var arduinoBoard = new johnnyFive.Board();
+var arduinoBoard = new johnnyFive.Board({ port: "COM4" });
 
 var request = require("request");
 
@@ -23,7 +23,7 @@ var serverURL = credentials.server_url;     // Insert URL you wanna send POST pa
 var machineName = "TRUMPF 500";
 
 // Read option file
-var optionsFileName = "options.json"
+var optionsFileName = "options.json";
 var optionsFile = fs.readFileSync(optionsFileName);
 var userOptions = JSON.parse(optionsFile);
 
@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
                 alertOptionsSaved(false);
             }
             alertOptionsSaved(true);
-        })
+        });
     }
 
     socket.on('enable-email', (data) => {
@@ -132,7 +132,7 @@ function checkDay(dayString) {
         case 'saturday':
             return 6;
         case 'sunday':
-            return 0
+            return 0;
     }
 }
 
@@ -144,7 +144,7 @@ function checkIfValidTime()
     var disabledTimeArray = userOptions.email_disabled_times;
     for (var i = 0; i < disabledTimeArray.length; i++)
     {
-        var timeEntry = disabledTimeArray[i]
+        var timeEntry = disabledTimeArray[i];
         // Check if the current day
         if (checkDay(timeEntry.weekday) == currentDay)
         {
@@ -185,7 +185,7 @@ function sendEmail()
             console.log('Email sent: ' + info.response);
         }
     });
-    console.log('Send email now')
+    console.log('Send email now');
 }
 
 function sendBackupData()
@@ -214,8 +214,8 @@ function sendBackupData()
                 } else {
                     console.log('Error: ' + error);
                     console.log("CANT'T SEND BACK");
-                    console.log(options.form)
-                    jsonTable.table.push(options.form)
+                    console.log(options.form);
+                    jsonTable.table.push(options.form);
                 }
             });
         }
@@ -223,7 +223,7 @@ function sendBackupData()
         console.log(outputJSON);
         fs.writeFile("backup.json", outputJSON, "utf8", function (err) {
             if (err) throw err;
-            console.log("Sent backup data!")
+            console.log("Sent backup data!");
         });
     });
 }
