@@ -177,8 +177,8 @@ function sendEmail()
     var mailOptions = {
         from: credentials.email_address,
         to: credentials.email_destination,
-        subject: '5000 has stopped punching',
-        text: '5000 has stopped punching'
+        subject: userOptions.device_name + ' has stopped punching',
+        text: userOptions.device_name + ' has stopped punching'
     };
     transporter.sendMail(mailOptions, function (error, info) {
         if (error)
