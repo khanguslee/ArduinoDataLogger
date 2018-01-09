@@ -64,6 +64,10 @@ io.on('connection', (socket) => {
         saveOptionsToFile();
     });
 
+    socket.on('toggle-email-list', () => {
+        socket.emit('update-email-list', {"email_destinations": credentials.email_destination});
+    });
+
     socket.on('enable-email', (data) => {
         userOptions.enable_email = data.enable_email;
         saveOptionsToFile();
@@ -176,7 +180,7 @@ function sendEmail()
 
     var mailOptions = {
         from: credentials.email_address,
-        to: credentials.email_destination,
+        to: credentials.email_destinations.join(' '),
         subject: userOptions.device_name + ' has stopped punching',
         text: userOptions.device_name + ' has stopped punching'
     };

@@ -13,7 +13,7 @@
     </header>
 
     <div class="container">
-        <h3>Options</h3>
+        <h2>Options</h2>
         <div id="deviceNameDiv"> 
             <p>
                 Device Name: <span id="deviceName"></span>
@@ -40,6 +40,23 @@
                     </div>
                     
                 </div>
+            </div>
+        </div>
+
+        <div id="emailDestinationDiv">
+            <p>
+                Email Destinations 
+                <button class="btn btn-primary btn-sm" id="editEmailDestination">
+                    Edit Email Destination
+                </button>
+                <button class="btn btn-secondary btn-sm" id="toggleEmailList" data-toggle="collapse" data-target="#listOfEmailDestinations" onclick="toggleEmailList()">
+                        Show/Hide Emails
+                </button>
+            </p>
+            <div class="collapse" id="listOfEmailDestinations">
+                <ul class="list-group" id="actualListOfEmailDestinations">
+                    <li class="list-group-item">None</li>
+                </ul>
             </div>
         </div>
 

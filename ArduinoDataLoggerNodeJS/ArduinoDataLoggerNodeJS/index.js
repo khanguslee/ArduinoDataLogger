@@ -86,6 +86,11 @@ function changeName() {
     document.getElementById("deviceName").innerHTML = newDeviceName;
 }
 
+function toggleEmailList() {
+    // Update email destination list
+    socket.emit('toggle-email-list');
+}
+
 function displayEmailOption() {
     /*
         Shows/Hides the emailOptions div
@@ -258,6 +263,23 @@ socket.on('options-saved', (isSaved) => {
         showSuccessAlert("Options saved!");
     } else {
         showErrorAlert("Options failed to save!");
+    }
+});
+
+socket.on('update-email-list', (data) => {
+    if (data.email_destinations.length)
+    {
+        let emailListDiv = document.getElementById('actualListOfEmailDestinations')
+        emailListDiv.innerHTML = '';
+        for (let i=0; i<data.email_destinations.length; i++)
+        {
+            let newEmailEntry = document.createElement('li');
+            newEmailEntry.className = 'list-group-item';
+            let newEmailText = document.createTextNode(data.email_destinations[i]);
+            newEmailEntry.appendChild(newEmailText);
+            emailListDiv.appendChild(newEmailEntry);
+        }
+        
     }
 });
 
