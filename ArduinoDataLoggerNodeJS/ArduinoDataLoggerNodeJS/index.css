@@ -29,3 +29,7 @@ h1 {
 tbody tr:hover {
     background-color: rgba(219, 219, 219, 0.856);
 }
+
+#changeNameButton {
+    float: right;
+}
