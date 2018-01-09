@@ -46,7 +46,7 @@
         <div id="emailDestinationDiv">
             <p>
                 Email Destinations 
-                <button class="btn btn-primary btn-sm" id="editEmailDestination">
+                <button class="btn btn-primary btn-sm" id="editEmailDestination" data-toggle="modal" data-target="#editEmailDestinations">
                     Edit Email Destination
                 </button>
                 <button class="btn btn-secondary btn-sm" id="toggleEmailList" data-toggle="collapse" data-target="#listOfEmailDestinations" onclick="toggleEmailList()">
@@ -58,6 +58,24 @@
                     <li class="list-group-item">None</li>
                 </ul>
             </div>
+            <div class="modal fade" id="editEmailDestinations" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title">Add/Remove Email Destinations</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>                              
+                            </div>
+                            <div class="modal-body">
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="changeName()" data-dismiss="modal">Save changes</button>                                    
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
         </div>
 
         <form class="form-group">
