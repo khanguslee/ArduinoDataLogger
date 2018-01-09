@@ -80,6 +80,12 @@ function sortTable() {
     return sortedTable;
 }
 
+function changeName() {
+    let newDeviceName = document.getElementById("inputChangeName").value;
+    socket.emit('change-name', {"device_name": newDeviceName});
+    document.getElementById("deviceName").innerHTML = newDeviceName;
+}
+
 function displayEmailOption() {
     /*
         Shows/Hides the emailOptions div
@@ -228,6 +234,10 @@ function addTimeEntry() {
 
 // Get already set options and display them
 socket.on('ready', (data) => {
+    // Set device name
+    document.getElementById("deviceName").innerHTML = data.device_name;
+
+    // Email options
     enableEmail = data.enable_email;    
     emailDisabledTimes = data.email_disabled_times;
     emailTime = data.email_time;

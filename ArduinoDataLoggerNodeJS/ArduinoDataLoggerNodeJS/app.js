@@ -59,6 +59,11 @@ io.on('connection', (socket) => {
         });
     }
 
+    socket.on('change-name', (data) => {
+        userOptions.device_name = data.device_name;
+        saveOptionsToFile();
+    });
+
     socket.on('enable-email', (data) => {
         userOptions.enable_email = data.enable_email;
         saveOptionsToFile();
