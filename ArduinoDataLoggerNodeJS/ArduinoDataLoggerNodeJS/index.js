@@ -94,7 +94,22 @@ function toggleEmailList() {
 function editEmailList() {
     // Update email destination list
     socket.emit('toggle-email-list');
+}
 
+function removeEmail(event) {
+    // Remove div
+    let removeEmailEntry = this.parentNode.remove();
+}
+
+function changeEmail() {
+    let emailListDiv = document.getElementById('modalListOfEmailDestinations');
+    let emailList = emailListDiv.getElementsByTagName('li');
+    let outputEmailList = [];
+    for (let index=0; index<emailList.length; index++) {
+        let emailEntry = emailList[index].id;
+        outputEmailList.push(emailEntry);
+    }
+    socket.emit('add-email-destination', {"email_destinations":outputEmailList});
 }
 
 function displayEmailOption() {
@@ -302,6 +317,7 @@ socket.on('update-email-list', (data) => {
             removeEmailButton.textContent = 'Remove';
             removeEmailButton.className = 'btn btn-danger btn-sm';
             removeEmailButton.style.cssFloat = 'right';
+            removeEmailButton.addEventListener('click', removeEmail);
             newEmailEntry.appendChild(removeEmailButton);
             modalEmailListDiv.appendChild(newEmailEntry);
         }

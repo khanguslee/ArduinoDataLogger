@@ -50,8 +50,18 @@ io.on('connection', (socket) => {
         socket.emit('options-saved', isSaved);
     }
 
+    // TODO: Remove duplicate code
     function saveOptionsToFile() {
         fs.writeFile(optionsFileName, JSON.stringify(userOptions), 'utf8', (error) => {
+            if (error) {
+                alertOptionsSaved(false);
+            }
+            alertOptionsSaved(true);
+        });
+    }
+
+    function saveCredentialsToFile() {
+        fs.writeFile(credentialsFileName, JSON.stringify(credentials), 'utf8', (error) => {
             if (error) {
                 alertOptionsSaved(false);
             }
@@ -66,6 +76,11 @@ io.on('connection', (socket) => {
 
     socket.on('toggle-email-list', () => {
         socket.emit('update-email-list', {"email_destinations": credentials.email_destination});
+    });
+
+    socket.on('add-email-destination', (data) => {
+        credentials.email_destination = data.email_destinations;
+        saveCredentialsToFile();
     });
 
     socket.on('enable-email', (data) => {
