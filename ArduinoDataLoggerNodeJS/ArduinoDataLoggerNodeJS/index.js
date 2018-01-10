@@ -7,6 +7,9 @@ var emailTime = 0;
 var enableEmail = false;
 
 function showSuccessAlert(title, message="") {
+    /*
+        Success alert that will pop up
+    */
     document.getElementById("success-header").innerHTML = title;
     document.getElementById("success-message").innerHTML = message;
     document.getElementById("success-alert").style.display = "block";
@@ -16,6 +19,9 @@ function showSuccessAlert(title, message="") {
 }
 
 function showErrorAlert(title, message="") {
+    /*
+        Error alert that will pop up
+    */
     document.getElementById("danger-header").innerHTML = title;
     document.getElementById("danger-message").innerHTML = message;
     document.getElementById("danger-alert").style.display = "block";
@@ -81,6 +87,10 @@ function sortTable() {
 }
 
 function changeName() {
+    /*
+        Changes the device name.
+        This name is only used to distinguish one device from another in the SQL database.
+    */
     let newDeviceName = document.getElementById("inputChangeName").value;
     socket.emit('change-name', {"device_name": newDeviceName});
     document.getElementById("deviceName").innerHTML = newDeviceName;
@@ -102,6 +112,9 @@ function removeEmail(event) {
 }
 
 function addEmail(event) {
+    /*
+        Ran when user adds a new email destination to the list
+    */
     let emailListDiv = document.getElementById('modalListOfEmailDestinations');
     let inputEmailElement = document.getElementById('newEmailInput');
     let inputEmailText = inputEmailElement.value;
@@ -124,6 +137,11 @@ function addEmail(event) {
 }
 
 function changeEmail() {
+    /*
+        This is triggered when user clicks on Save Changes within the email destination modal.
+        This will go through the list entry ID's and saves them into an array. 
+        The email destinations will be sent to app.js (Server) to be stored in a json file
+    */
     let emailListDiv = document.getElementById('modalListOfEmailDestinations');
     let emailList = emailListDiv.getElementsByTagName('li');
     let outputEmailList = [];
@@ -132,6 +150,14 @@ function changeEmail() {
         outputEmailList.push(emailEntry);
     }
     socket.emit('add-email-destination', {"email_destinations":outputEmailList});
+}
+
+function closeEmailModal() {
+    /* 
+        When user exits out of the email destination modal, we will clear the input box inside that modal
+    */
+    let inputEmailElement = document.getElementById('newEmailInput');
+    inputEmailElement.value = '';
 }
 
 function displayEmailOption() {
@@ -302,6 +328,9 @@ socket.on('ready', (data) => {
 });
 
 socket.on('options-saved', (isSaved) => {
+    /*
+        Server can call this if options were successful/unsuccessful in saving.
+    */
     if(isSaved) {
         showSuccessAlert("Options saved!");
     } else {
@@ -310,6 +339,9 @@ socket.on('options-saved', (isSaved) => {
 });
 
 socket.on('update-email-list', (data) => {
+    /*
+        Will populate the two email destination lists.
+    */
     if (data.email_destinations.length)
     {
         // Update email destination list
