@@ -101,6 +101,28 @@ function removeEmail(event) {
     let removeEmailEntry = this.parentNode.remove();
 }
 
+function addEmail(event) {
+    let emailListDiv = document.getElementById('modalListOfEmailDestinations');
+    let inputEmailElement = document.getElementById('newEmailInput');
+    let inputEmailText = inputEmailElement.value;
+
+    // Create new list entry
+    let newEmailEntry = document.createElement('li');
+    newEmailEntry.className = 'list-group-item';
+    newEmailEntry.id = inputEmailText;
+    let newEmailText = document.createTextNode(inputEmailText);
+    newEmailEntry.appendChild(newEmailText);
+
+    let removeEmailButton = document.createElement('button');
+    removeEmailButton.textContent = 'Remove';
+    removeEmailButton.className = 'btn btn-danger btn-sm';
+    removeEmailButton.style.cssFloat = 'right';
+    removeEmailButton.addEventListener('click', removeEmail);
+    newEmailEntry.appendChild(removeEmailButton);
+    emailListDiv.appendChild(newEmailEntry);
+    inputEmailElement.value = '';
+}
+
 function changeEmail() {
     let emailListDiv = document.getElementById('modalListOfEmailDestinations');
     let emailList = emailListDiv.getElementsByTagName('li');
