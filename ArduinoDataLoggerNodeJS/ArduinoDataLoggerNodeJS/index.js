@@ -119,6 +119,13 @@ function addEmail(event) {
     let inputEmailElement = document.getElementById('newEmailInput');
     let inputEmailText = inputEmailElement.value;
 
+    // Regex found here: https://www.w3resource.com/javascript/form/email-validation.php
+    let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!inputEmailText.match(emailRegex))
+    {
+        showErrorAlert("Invalid Email", "Invalid email format");
+        return;
+    }
     // Create new list entry
     let newEmailEntry = document.createElement('li');
     newEmailEntry.className = 'list-group-item';

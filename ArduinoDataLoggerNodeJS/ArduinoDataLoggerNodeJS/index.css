@@ -20,10 +20,12 @@ label {
 
 #success-alert {
     display: none;
+    z-index: 2000;
 }
 
 #danger-alert {
     display: none;
+    z-index: 2000;
 }
 
 .table {
