@@ -92,6 +92,10 @@ function changeName() {
         This name is only used to distinguish one device from another in the SQL database.
     */
     let newDeviceName = document.getElementById("inputChangeName").value;
+    if (newDeviceName == '') {
+        showErrorAlert('Invalid Name', "Please input a valid name");
+        return;
+    }
     socket.emit('change-name', {"device_name": newDeviceName});
     document.getElementById("deviceName").innerHTML = newDeviceName;
 }
