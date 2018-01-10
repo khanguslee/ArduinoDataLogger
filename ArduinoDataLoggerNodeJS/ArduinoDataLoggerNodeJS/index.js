@@ -91,6 +91,12 @@ function toggleEmailList() {
     socket.emit('toggle-email-list');
 }
 
+function editEmailList() {
+    // Update email destination list
+    socket.emit('toggle-email-list');
+
+}
+
 function displayEmailOption() {
     /*
         Shows/Hides the emailOptions div
@@ -269,17 +275,36 @@ socket.on('options-saved', (isSaved) => {
 socket.on('update-email-list', (data) => {
     if (data.email_destinations.length)
     {
-        let emailListDiv = document.getElementById('actualListOfEmailDestinations')
-        emailListDiv.innerHTML = '';
+        // Update email destination list
+        let mainEmailListDiv = document.getElementById('mainListOfEmailDestinations');
+        mainEmailListDiv.innerHTML = '';
         for (let i=0; i<data.email_destinations.length; i++)
         {
             let newEmailEntry = document.createElement('li');
             newEmailEntry.className = 'list-group-item';
             let newEmailText = document.createTextNode(data.email_destinations[i]);
             newEmailEntry.appendChild(newEmailText);
-            emailListDiv.appendChild(newEmailEntry);
+            mainEmailListDiv.appendChild(newEmailEntry);
         }
         
+        // Done again since you cannot append same child to multiple parents
+        let modalEmailListDiv = document.getElementById('modalListOfEmailDestinations');
+        modalEmailListDiv.innerHTML = '';
+        for (let i=0; i<data.email_destinations.length; i++)
+        {
+            let newEmailEntry = document.createElement('li');
+            newEmailEntry.className = 'list-group-item';
+            newEmailEntry.id = data.email_destinations[i];
+            let newEmailText = document.createTextNode(data.email_destinations[i]);
+            newEmailEntry.appendChild(newEmailText);
+
+            let removeEmailButton = document.createElement('button');
+            removeEmailButton.textContent = 'Remove';
+            removeEmailButton.className = 'btn btn-danger btn-sm';
+            removeEmailButton.style.cssFloat = 'right';
+            newEmailEntry.appendChild(removeEmailButton);
+            modalEmailListDiv.appendChild(newEmailEntry);
+        }
     }
 });
 

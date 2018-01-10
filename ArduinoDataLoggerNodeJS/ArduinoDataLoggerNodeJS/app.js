@@ -180,7 +180,7 @@ function sendEmail()
 
     var mailOptions = {
         from: credentials.email_address,
-        to: credentials.email_destinations.join(' '),
+        to: credentials.email_destination.join(' '),
         subject: userOptions.device_name + ' has stopped punching',
         text: userOptions.device_name + ' has stopped punching'
     };
