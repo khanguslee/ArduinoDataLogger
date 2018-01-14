@@ -50,8 +50,18 @@ io.on('connection', (socket) => {
         socket.emit('options-saved', isSaved);
     }
 
+    // TODO: Remove duplicate code
     function saveOptionsToFile() {
         fs.writeFile(optionsFileName, JSON.stringify(userOptions), 'utf8', (error) => {
+            if (error) {
+                alertOptionsSaved(false);
+            }
+            alertOptionsSaved(true);
+        });
+    }
+
+    function saveCredentialsToFile() {
+        fs.writeFile(credentialsFileName, JSON.stringify(credentials), 'utf8', (error) => {
             if (error) {
                 alertOptionsSaved(false);
             }
@@ -62,6 +72,16 @@ io.on('connection', (socket) => {
     socket.on('change-name', (data) => {
         userOptions.device_name = data.device_name;
         saveOptionsToFile();
+    });
+
+    socket.on('toggle-email-list', () => {
+        socket.emit('update-email-list', {"email_destinations": credentials.email_destination});
+    });
+
+    socket.on('add-email-destination', (data) => {
+        credentials.email_destination = data.email_destinations;
+        saveCredentialsToFile();
+        socket.emit('update-email-list', {"email_destinations": credentials.email_destination});
     });
 
     socket.on('enable-email', (data) => {
@@ -176,9 +196,9 @@ function sendEmail()
 
     var mailOptions = {
         from: credentials.email_address,
-        to: credentials.email_destination,
-        subject: '5000 has stopped punching',
-        text: '5000 has stopped punching'
+        to: credentials.email_destination.join(' '),
+        subject: userOptions.device_name + ' has stopped punching',
+        text: userOptions.device_name + ' has stopped punching'
     };
     transporter.sendMail(mailOptions, function (error, info) {
         if (error)

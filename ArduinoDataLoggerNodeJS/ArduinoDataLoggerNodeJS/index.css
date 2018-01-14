@@ -2,6 +2,10 @@ h1 {
     text-align: center;
 }
 
+label {
+    margin-top: 5px;
+}
+
 #dateTimeButton {
     text-align: right;
 }
@@ -16,10 +20,12 @@ h1 {
 
 #success-alert {
     display: none;
+    z-index: 2000;
 }
 
 #danger-alert {
     display: none;
+    z-index: 2000;
 }
 
 .table {
@@ -32,4 +38,8 @@ tbody tr:hover {
 
 #changeNameButton {
     float: right;
+}
+
+#editEmailDestination, #toggleEmailList {
+    float:right;
 }

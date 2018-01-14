@@ -13,7 +13,7 @@
     </header>
 
     <div class="container">
-        <h3>Options</h3>
+        <h2>Options</h2>
         <div id="deviceNameDiv"> 
             <p>
                 Device Name: <span id="deviceName"></span>
@@ -41,6 +41,49 @@
                     
                 </div>
             </div>
+        </div>
+
+        <div id="emailDestinationDiv">
+            <p>
+                Email Destinations 
+                <button class="btn btn-primary btn-sm" id="editEmailDestination" data-toggle="modal" data-target="#editEmailDestinations" onClick="editEmailList()">
+                    Edit Email Destination
+                </button>
+                <button class="btn btn-secondary btn-sm" id="toggleEmailList" data-toggle="collapse" data-target="#listOfEmailDestinations" onclick="toggleEmailList()">
+                    Show/Hide Emails
+                </button>
+            </p>
+            <div class="collapse" id="listOfEmailDestinations">
+                <ul class="list-group" id="mainListOfEmailDestinations">
+                    <li class="list-group-item">None</li>
+                </ul>
+            </div>
+            <div class="modal fade" id="editEmailDestinations" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title">Add/Remove Email Destinations</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>                              
+                            </div>
+                            <div class="modal-body">
+                                <ul class="list-group" id="modalListOfEmailDestinations">
+                                    <li class="list-group-item">None</li>
+                                </ul>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="newEmailInput" placeholder="Add New Email">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" onClick="addEmail()">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="changeEmail()" data-dismiss="modal">Save changes</button>                                    
+                                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeEmailModal()">Close</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
         </div>
 
         <form class="form-group">

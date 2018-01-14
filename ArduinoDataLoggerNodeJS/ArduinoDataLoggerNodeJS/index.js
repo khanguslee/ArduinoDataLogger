@@ -7,6 +7,9 @@ var emailTime = 0;
 var enableEmail = false;
 
 function showSuccessAlert(title, message="") {
+    /*
+        Success alert that will pop up
+    */
     document.getElementById("success-header").innerHTML = title;
     document.getElementById("success-message").innerHTML = message;
     document.getElementById("success-alert").style.display = "block";
@@ -16,6 +19,9 @@ function showSuccessAlert(title, message="") {
 }
 
 function showErrorAlert(title, message="") {
+    /*
+        Error alert that will pop up
+    */
     document.getElementById("danger-header").innerHTML = title;
     document.getElementById("danger-message").innerHTML = message;
     document.getElementById("danger-alert").style.display = "block";
@@ -81,9 +87,88 @@ function sortTable() {
 }
 
 function changeName() {
+    /*
+        Changes the device name.
+        This name is only used to distinguish one device from another in the SQL database.
+    */
     let newDeviceName = document.getElementById("inputChangeName").value;
+    if (newDeviceName == '') {
+        showErrorAlert('Invalid Name', "Please input a valid name");
+        return;
+    }
     socket.emit('change-name', {"device_name": newDeviceName});
     document.getElementById("deviceName").innerHTML = newDeviceName;
+}
+
+function toggleEmailList() {
+    // Update email destination list
+    socket.emit('toggle-email-list');
+}
+
+function editEmailList() {
+    // Update email destination list
+    socket.emit('toggle-email-list');
+}
+
+function removeEmail(event) {
+    // Remove div
+    let removeEmailEntry = this.parentNode.remove();
+}
+
+function addEmail(event) {
+    /*
+        Ran when user adds a new email destination to the list
+    */
+    let emailListDiv = document.getElementById('modalListOfEmailDestinations');
+    let inputEmailElement = document.getElementById('newEmailInput');
+    let inputEmailText = inputEmailElement.value;
+
+    // Regex found here: https://www.w3resource.com/javascript/form/email-validation.php
+    let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!inputEmailText.match(emailRegex))
+    {
+        showErrorAlert("Invalid Email", "Invalid email format");
+        return;
+    }
+    // Create new list entry
+    let newEmailEntry = document.createElement('li');
+    newEmailEntry.className = 'list-group-item';
+    newEmailEntry.id = inputEmailText;
+    let newEmailText = document.createTextNode(inputEmailText);
+    newEmailEntry.appendChild(newEmailText);
+
+    let removeEmailButton = document.createElement('button');
+    removeEmailButton.textContent = 'Remove';
+    removeEmailButton.className = 'btn btn-danger btn-sm';
+    removeEmailButton.style.cssFloat = 'right';
+    removeEmailButton.addEventListener('click', removeEmail);
+    newEmailEntry.appendChild(removeEmailButton);
+    emailListDiv.appendChild(newEmailEntry);
+    inputEmailElement.value = '';
+}
+
+function changeEmail() {
+    /*
+        This is triggered when user clicks on Save Changes within the email destination modal.
+        This will go through the list entry ID's and saves them into an array. 
+        The email destinations will be sent to app.js (Server) to be stored in a json file
+    */
+    let emailListDiv = document.getElementById('modalListOfEmailDestinations');
+    let emailList = emailListDiv.getElementsByTagName('li');
+    let outputEmailList = [];
+    for (let index=0; index<emailList.length; index++) {
+        let emailEntry = emailList[index].id;
+        outputEmailList.push(emailEntry);
+    }
+    socket.emit('add-email-destination', {"email_destinations":outputEmailList});
+}
+
+function closeEmailModal() {
+    /* 
+        When user exits out of the email destination modal, we will clear the input box inside that modal
+    */
+    let inputEmailElement = document.getElementById('newEmailInput');
+    inputEmailElement.value = '';
 }
 
 function displayEmailOption() {
@@ -254,10 +339,53 @@ socket.on('ready', (data) => {
 });
 
 socket.on('options-saved', (isSaved) => {
+    /*
+        Server can call this if options were successful/unsuccessful in saving.
+    */
     if(isSaved) {
         showSuccessAlert("Options saved!");
     } else {
         showErrorAlert("Options failed to save!");
+    }
+});
+
+socket.on('update-email-list', (data) => {
+    /*
+        Will populate the two email destination lists.
+    */
+    if (data.email_destinations.length)
+    {
+        // Update email destination list
+        let mainEmailListDiv = document.getElementById('mainListOfEmailDestinations');
+        mainEmailListDiv.innerHTML = '';
+        for (let i=0; i<data.email_destinations.length; i++)
+        {
+            let newEmailEntry = document.createElement('li');
+            newEmailEntry.className = 'list-group-item';
+            let newEmailText = document.createTextNode(data.email_destinations[i]);
+            newEmailEntry.appendChild(newEmailText);
+            mainEmailListDiv.appendChild(newEmailEntry);
+        }
+        
+        // Done again since you cannot append same child to multiple parents
+        let modalEmailListDiv = document.getElementById('modalListOfEmailDestinations');
+        modalEmailListDiv.innerHTML = '';
+        for (let i=0; i<data.email_destinations.length; i++)
+        {
+            let newEmailEntry = document.createElement('li');
+            newEmailEntry.className = 'list-group-item';
+            newEmailEntry.id = data.email_destinations[i];
+            let newEmailText = document.createTextNode(data.email_destinations[i]);
+            newEmailEntry.appendChild(newEmailText);
+
+            let removeEmailButton = document.createElement('button');
+            removeEmailButton.textContent = 'Remove';
+            removeEmailButton.className = 'btn btn-danger btn-sm';
+            removeEmailButton.style.cssFloat = 'right';
+            removeEmailButton.addEventListener('click', removeEmail);
+            newEmailEntry.appendChild(removeEmailButton);
+            modalEmailListDiv.appendChild(newEmailEntry);
+        }
     }
 });
 
