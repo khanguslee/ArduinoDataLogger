@@ -81,6 +81,7 @@ io.on('connection', (socket) => {
     socket.on('add-email-destination', (data) => {
         credentials.email_destination = data.email_destinations;
         saveCredentialsToFile();
+        socket.emit('update-email-list', {"email_destinations": credentials.email_destination});
     });
 
     socket.on('enable-email', (data) => {
