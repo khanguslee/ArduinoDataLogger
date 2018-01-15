@@ -20,12 +20,12 @@ var credentialsFileName = "credentials.json";
 var readCredentialsFile = fs.readFileSync(credentialsFileName);
 var credentials = JSON.parse(readCredentialsFile);
 var serverURL = credentials.server_url;     // Insert URL you wanna send POST packet to
-var machineName = "TRUMPF 500";
 
 // Read option file
 var optionsFileName = "options.json";
 var optionsFile = fs.readFileSync(optionsFileName);
 var userOptions = JSON.parse(optionsFile);
+var machineName = userOptions.device_name;
 
 /*
 --- Hosting webpage code ---
