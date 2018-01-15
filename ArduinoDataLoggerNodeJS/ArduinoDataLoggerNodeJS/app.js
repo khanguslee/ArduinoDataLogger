@@ -142,7 +142,7 @@ var transporter = nodemailer.createTransport({
 
 function checkDay(dayString) {
     /* Converts day string to int */
-    switch (dayString)
+    switch (dayString.toLowerCase())
     {
         case 'monday':
             return 1;
