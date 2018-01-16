@@ -20,12 +20,12 @@ var credentialsFileName = "credentials.json";
 var readCredentialsFile = fs.readFileSync(credentialsFileName);
 var credentials = JSON.parse(readCredentialsFile);
 var serverURL = credentials.server_url;     // Insert URL you wanna send POST packet to
-var machineName = "TRUMPF 500";
 
 // Read option file
 var optionsFileName = "options.json";
 var optionsFile = fs.readFileSync(optionsFileName);
 var userOptions = JSON.parse(optionsFile);
+var machineName = userOptions.device_name;
 
 /*
 --- Hosting webpage code ---
@@ -142,7 +142,7 @@ var transporter = nodemailer.createTransport({
 
 function checkDay(dayString) {
     /* Converts day string to int */
-    switch (dayString)
+    switch (dayString.toLowerCase())
     {
         case 'monday':
             return 1;
@@ -174,7 +174,7 @@ function checkIfValidTime()
         if (checkDay(timeEntry.weekday) == currentDay)
         {
             // Check if email is within disabled time
-            var currentTime = currentDate.getHours() + currentDate.getMinutes;
+            var currentTime = currentDate.getHours().toString() + currentDate.getMinutes().toString();
             if (parseInt(currentTime) > parseInt(timeEntry.start_time) && parseInt(currentTime) < parseInt(timeEntry.end_time))
             {
                 return false;
