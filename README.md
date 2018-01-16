@@ -41,7 +41,7 @@ Options website can be accessed via http://localhost:8080
 |   machine     |   Machine Name        |   Name of the machine/device  |
 |   start_time  |   YYYY-DD-MM HH:MM:SS |   Start time of the vibration |
 |   day_night   |   true/false          |   Whether the time qualifies as a day or night job |
-|   active      |   true/false          |   If the machine is currently on  |
+|   active      |   true                |   Tell server that machine is on |
 
 ### Vibration End
 
@@ -50,7 +50,7 @@ Options website can be accessed via http://localhost:8080
 |   machine     |   Machine Name        |   Name of the machine/device  |
 |   end_time    |   YYYY-DD-MM HH:MM:SS |   End time of the vibration |
 |   length_time |   Time in seconds     |   Length of time the machine was on for |
-|   active      |   true/false          |   If the machine is currently on  |
+|   active      |   false               |   Tell server that machine is off  |
 
 ## Test Server
 For testing, I would recommend using https://requestb.in/ to act as the receiving server.
