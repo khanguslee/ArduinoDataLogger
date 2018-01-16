@@ -174,7 +174,7 @@ function checkIfValidTime()
         if (checkDay(timeEntry.weekday) == currentDay)
         {
             // Check if email is within disabled time
-            var currentTime = currentDate.getHours() + currentDate.getMinutes;
+            var currentTime = currentDate.getHours().toString() + currentDate.getMinutes().toString();
             if (parseInt(currentTime) > parseInt(timeEntry.start_time) && parseInt(currentTime) < parseInt(timeEntry.end_time))
             {
                 return false;
