@@ -16,16 +16,25 @@ var arduinoBoard = new johnnyFive.Board({ port: "COM4" });
 var request = require("request");
 
 var fs = require('fs');
+// Read credentials file
 var credentialsFileName = "credentials.json";
 var readCredentialsFile = fs.readFileSync(credentialsFileName);
 var credentials = JSON.parse(readCredentialsFile);
-var serverURL = credentials.server_url;     // Insert URL you wanna send POST packet to
+
+function loadCredentialsFile() {
+    readCredentialsFile = fs.readFileSync(credentialsFileName);
+    credentials = JSON.parse(readCredentialsFile);
+}
 
 // Read option file
 var optionsFileName = "options.json";
 var optionsFile = fs.readFileSync(optionsFileName);
 var userOptions = JSON.parse(optionsFile);
-var machineName = userOptions.device_name;
+
+function loadOptionsFile() {
+    optionsFile = fs.readFileSync(optionsFileName);
+    userOptions = JSON.parse(optionsFile);
+}
 
 /*
 --- Hosting webpage code ---
@@ -55,8 +64,10 @@ io.on('connection', (socket) => {
         fs.writeFile(optionsFileName, JSON.stringify(userOptions), 'utf8', (error) => {
             if (error) {
                 alertOptionsSaved(false);
-            }
+                return false;
+            } 
             alertOptionsSaved(true);
+            return true;
         });
     }
 
@@ -64,14 +75,17 @@ io.on('connection', (socket) => {
         fs.writeFile(credentialsFileName, JSON.stringify(credentials), 'utf8', (error) => {
             if (error) {
                 alertOptionsSaved(false);
+                return false;
             }
             alertOptionsSaved(true);
+            return true;
         });
     }
 
     socket.on('change-name', (data) => {
         userOptions.device_name = data.device_name;
         saveOptionsToFile();
+        console.log("Device name changed");
     });
 
     socket.on('toggle-email-list', () => {
@@ -81,22 +95,26 @@ io.on('connection', (socket) => {
     socket.on('add-email-destination', (data) => {
         credentials.email_destination = data.email_destinations;
         saveCredentialsToFile();
+        console.log("Email destination changed");
         socket.emit('update-email-list', {"email_destinations": credentials.email_destination});
     });
 
     socket.on('enable-email', (data) => {
         userOptions.enable_email = data.enable_email;
         saveOptionsToFile();
+        console.log("Enable email option changed");
     });
 
     socket.on('change-duration', (data) => {
         userOptions.email_time = data.email_time;
         saveOptionsToFile();
+        console.log("Time before email sent changed");
     });
 
     socket.on('update-time', (data) => {
         userOptions.email_disabled_times = data.email_disabled_times;
         saveOptionsToFile();
+        console.log("Email disabled times changed");
     });
 
     socket.on('error', (error) => {  
@@ -131,6 +149,9 @@ Follow this to set up email address:
 https://stackoverflow.com/questions/14654736/nodemailer-econnrefused
 */
 var nodemailer = require('nodemailer');
+
+// Options to send email via email server
+
 var transporter = nodemailer.createTransport({
     host: "192.168.1.2",
     port: 25,
@@ -139,6 +160,20 @@ var transporter = nodemailer.createTransport({
         rejectUnauthorized: false
     }
 });
+
+
+// Options to send email via gmail
+/*
+var transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // use SSL
+    auth: {
+        user: credentials.email_address,
+        pass: credentials.email_password
+    }
+});
+*/
 
 function checkDay(dayString) {
     /* Converts day string to int */
@@ -189,8 +224,17 @@ function sendEmail()
     /*
     Send an email to a chosen email destination.
     */
-    if (!checkIfValidTime() || !userOptions.enable_email)
+    loadCredentialsFile();
+    loadOptionsFile();
+    
+    if(!userOptions.enable_email)
     {
+        return false;
+    }
+
+    if (!checkIfValidTime())
+    {
+        console.log('Email disabled');
         return false;
     }
 
@@ -228,7 +272,7 @@ function sendBackupData()
 
         for (var index = 0; index < jsonTable.table.length; index++) {
             var options = {
-                url: serverURL,
+                url: credentials.server_url,
                 method: "POST",
                 form: jsonTable.table.shift()
             };
@@ -302,15 +346,18 @@ function vibrationStart()
     var startTime = getTime();
     console.log(startTime[0] + " " + startTime[1]);
 
+    loadCredentialsFile();
+    loadOptionsFile();
+
     var startData = {
-        machine: machineName,
+        machine: userOptions.device_name,
         start_time: startTime[0] + " " + startTime[1],
         day_night: startTime[3],
         active: "true"
     };
 
     const options = {
-        url: serverURL,
+        url: credentials.server_url,
         method: "POST",
         form: startData
     };
@@ -353,15 +400,18 @@ function vibrationStop(startTimeUnix)
     var lengthTime = endTimeUnix - startTimeUnix;
     console.log("Length time: " + lengthTime);
 
+    loadCredentialsFile();
+    loadOptionsFile();
+
     var endData = {
-        machine: machineName,
+        machine: userOptions.device_name,
         end_time: endTime[0] + " " + endTime[1],
         length_time: lengthTime,
         active: "false"
     };
 
     const options = {
-        url: serverURL,
+        url: credentials.server_url,
         method: "POST",
         form: endData
     };
