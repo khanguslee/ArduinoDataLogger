@@ -351,7 +351,6 @@ function vibrationStart()
     var startData = {
         machine: userOptions.device_name,
         start_time: startTime[0] + " " + startTime[1],
-        day_night: startTime[3],
         active: "true"
     };
 
@@ -364,26 +363,15 @@ function vibrationStart()
     request.post(options, function (error, response, body) {
         if (!error) {
             console.log("Sent starting message!");
-            sendBackupData();
         } else {
             console.log("CAN'T SEND");
-            // Write to JSON file for backup if can't send to server
-            fs.readFile("backup.json", "utf8", function readFileCallback(err, data) {
-                if (err) throw err;
-                jsonTable = JSON.parse(data);
-                jsonTable.table.push(startData);
-                var outputJSON = JSON.stringify(jsonTable);
-                fs.writeFile("backup.json", outputJSON, "utf8", function (err) {
-                    if (err) throw err;
-                });
-            });
         }
     });
 
-    return startTime[2];
+    return startTime;
 }
 
-function vibrationStop(startTimeUnix)
+function vibrationStop(startTime)
 {
     /*
     Should get:
@@ -396,6 +384,7 @@ function vibrationStop(startTimeUnix)
     var endTime = getTime();
     console.log(endTime[0] + " " + endTime[1]);
     var endTimeUnix = endTime[2];
+    var startTimeUnix = startTime[2];
     var lengthTime = endTimeUnix - startTimeUnix;
     console.log("Length time: " + lengthTime);
 
@@ -404,7 +393,9 @@ function vibrationStop(startTimeUnix)
 
     var endData = {
         machine: userOptions.device_name,
+        start_time: startTime[0] + " " + startTime[1],
         end_time: endTime[0] + " " + endTime[1],
+        day_night: startTime[3],
         length_time: lengthTime,
         active: "false"
     };
