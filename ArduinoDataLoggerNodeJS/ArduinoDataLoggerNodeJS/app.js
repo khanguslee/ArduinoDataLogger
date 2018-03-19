@@ -366,7 +366,7 @@ function vibrationStart()
             console.log("Sent starting message!");
             sendBackupData();
         } else {
-            console.log("CANT'T SEND");
+            console.log("CAN'T SEND");
             // Write to JSON file for backup if can't send to server
             fs.readFile("backup.json", "utf8", function readFileCallback(err, data) {
                 if (err) throw err;
@@ -420,7 +420,7 @@ function vibrationStop(startTimeUnix)
             console.log("Sent end message!");
             sendBackupData();
         } else {
-            console.log("CANT'T SEND");
+            console.log("CAN'T SEND");
 
             // Write to JSON file for backup if can't send to server
             fs.readFile("backup.json", "utf8", function readFileCallback(err, data) {
