@@ -50,6 +50,7 @@ function sendStartRequest() {
     var startData = {
         machine: userOptions.device_name,
         start_time: startTime[0] + " " + startTime[1],
+        end_time: '',
         day_night: startTime[3],
         active: "true"
     };
@@ -70,19 +71,21 @@ function sendStartRequest() {
             console.log(error);
         }
     });
-    return startTime[2];
+    return startTime;
 }
 
-function sendEndRequest(startTimeUnix) {
+function sendEndRequest(startTime) {
     var endTime = getTime();
     console.log(endTime[0] + " " + endTime[1]);
     var endTimeUnix = endTime[2];
-    var lengthTime = endTimeUnix - startTimeUnix;
+    var lengthTime = endTimeUnix - startTime[2];
     console.log("Length time: " + lengthTime);
 
     var endData = {
         machine: userOptions.device_name,
+        start_time: startTime[0] + " " + startTime[1],
         end_time: endTime[0] + " " + endTime[1],
+        day_night: startTime[3],
         length_time: lengthTime,
         active: "false"
     };
