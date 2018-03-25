@@ -151,6 +151,7 @@ https://stackoverflow.com/questions/14654736/nodemailer-econnrefused
 var nodemailer = require('nodemailer');
 
 // Options to send email via email server
+
 var transporter = nodemailer.createTransport({
     host: "192.168.1.2",
     port: 25,
@@ -239,7 +240,7 @@ function sendEmail()
 
     var mailOptions = {
         from: credentials.email_address,
-        to: credentials.email_destination.join(' '),
+        to: credentials.email_destination,
         subject: userOptions.device_name + ' has stopped punching',
         text: userOptions.device_name + ' has stopped punching'
     };
