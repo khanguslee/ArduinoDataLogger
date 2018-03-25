@@ -137,5 +137,58 @@ function testCorrectEmailRecipients()
     console.log(mailOptions);
 }
 
-sendTestRequest();
-testCorrectEmailRecipients();
+/* Test email time is correct */
+function checkDay(dayString) {
+    /* Converts day string to int */
+    switch (dayString.toLowerCase())
+    {
+        case 'monday':
+            return 1;
+        case 'tuesday':
+            return 2;
+        case 'wednesday':
+            return 3;
+        case 'thursday':
+            return 4;
+        case 'friday':
+            return 5;
+        case 'saturday':
+            return 6;
+        case 'sunday':
+            return 0;
+    }
+}
+
+function checkIfValidTime()
+{
+    /* Check if email should be sent */
+    var currentDate = new Date();
+    var currentDay = currentDate.getDay(); 
+    var disabledTimeArray = userOptions.email_disabled_times;
+    console.log(disabledTimeArray);
+    for (var i = 0; i < disabledTimeArray.length; i++)
+    {
+        var timeEntry = disabledTimeArray[i];
+        // Check if the current day
+        if (checkDay(timeEntry.weekday) == currentDay)
+        {
+            // Check if email is within disabled time
+            var currentTime = currentDate.getHours().toString() + currentDate.getMinutes().toString();
+            console.log(currentTime);
+            if (parseInt(currentTime) > parseInt(timeEntry.start_time) && parseInt(currentTime) < parseInt(timeEntry.end_time))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+function testEmailValidTime() {
+    console.log(checkIfValidTime());
+}
+
+
+//sendTestRequest();
+//testCorrectEmailRecipients();
+testEmailValidTime();
