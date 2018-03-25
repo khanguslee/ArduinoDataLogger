@@ -120,4 +120,22 @@ function sendTestRequest() {
     }, timeDelay);
 }
 
+/* Test Email */
+function testCorrectEmailRecipients()
+{
+    /*
+    Send an email to a chosen email destination.
+    */
+
+    var mailOptions = {
+        from: credentials.email_address,
+        to: credentials.email_destination,
+        subject: userOptions.device_name + ' has stopped punching',
+        text: userOptions.device_name + ' has stopped punching'
+    };
+
+    console.log(mailOptions);
+}
+
 sendTestRequest();
+testCorrectEmailRecipients();
